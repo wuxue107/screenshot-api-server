@@ -229,7 +229,7 @@ const getPage = async function(doFunc,timeout){
             closeCurrentPage = function () {
                 clearTimeout(timeoutId);
                 if(page){
-                    console.info("close page:" + page.url)
+                    console.info("close page:" + page.url())
                     page.close();
                     page = null;
                 }
