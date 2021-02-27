@@ -148,6 +148,7 @@ const getBrowser = async function(){
     return browser;
 };
 
+getBrowser();
 
 const getPage = async function(doFunc,timeout){
     timeout = timeout || 30000;
