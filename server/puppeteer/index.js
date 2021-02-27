@@ -1,14 +1,16 @@
 // puppeteer 库会下载自带chrome，使用自带chrome启动并渲染
 const puppeteer = require('puppeteer');
+const _ = require('lodash');
+
 // const fs = require('fs');
-let sleep = async function(timeout){
+const sleep = async function(timeout){
     return new Promise(function(resolve){
         setTimeout(function(){
             resolve();
         },timeout)
     });
 };
-let waitPageComplete = async function(page,timeout,checkPageCompleteJs){
+const waitPageComplete = async function(page,timeout,checkPageCompleteJs){
     timeout = ~~timeout;
     if(timeout < 1000){
         timeout = 1000;
@@ -49,7 +51,7 @@ let waitPageComplete = async function(page,timeout,checkPageCompleteJs){
     });
 };
 
-let screenshotDOMElement = async function(page, selector, saveFile,encoding,type) {
+const screenshotDOMElement = async function(page, selector, saveFile,encoding,type) {
     type = type === 'jpeg'?'jpeg':'png';
     encoding = encoding === 'binary'?'binary':'base64';
     const rect = await page.evaluate(selector => {
@@ -82,7 +84,65 @@ let screenshotDOMElement = async function(page, selector, saveFile,encoding,type
     return await page.screenshot(option);
 };
 
-let renderPdf = async function(page,saveFile){
+const screenshotDOMElements = async function(page, selectors, savePath,encoding,type) {
+    type = type === 'jpeg'?'jpeg':'png';
+    encoding = encoding === 'binary'?'binary':'base64';
+
+    if(!_.isArray(selectors)){
+        throw "invalid screenshot selectors";
+    }
+    
+    let images = {};
+    for(let i in selectors){
+        let selector = selectors[i];
+        if(!_.isString(selector)){
+            continue;
+        }
+        let rects = await page.evaluate(selector => {
+            try{
+                let elements = document.querySelectorAll(selector);
+                let ranges =[];
+                elements.forEach(function(element){
+                    let {left, top, width, height} = element.getBoundingClientRect();
+                    if(width * height !== 0){
+                        return ranges.push({left, top, width, height});
+                    }
+                });
+                
+                return ranges;
+            }catch(e){
+                return [];
+            }
+        }, selector);
+
+        images[selector] = [];
+        for(let j in rects){
+            let rect = rects[j];
+            let option = {
+                type : type,
+                encoding : encoding,
+                clip: rect ? {
+                    y:    rect.top,
+                    x:   rect.left,
+                    width:  rect.width,
+                    height: rect.height
+                } : null
+            };
+            if(savePath){
+                //option.path = saveFile;
+            }
+            
+            let imageData = await page.screenshot(option);
+            if(imageData){
+                images[selector].push('data:image/png;base64,' + imageData)
+            }
+        }
+    }
+    
+    return images;
+};
+
+const renderPdf = async function(page,saveFile){
     let option = {
         //landscape : false,
         displayHeaderFooter: false,
@@ -123,7 +183,7 @@ let renderPdf = async function(page,saveFile){
 
 let browser;
 
-let closeBrowser = function () {
+const closeBrowser = function () {
     if(browser){
         try{
             browser.close();
@@ -169,6 +229,7 @@ const getPage = async function(doFunc,timeout){
             closeCurrentPage = function () {
                 clearTimeout(timeoutId);
                 if(page){
+                    console.info("close page:" + page.url)
                     page.close();
                     page = null;
                 }
@@ -240,5 +301,6 @@ const loadPage = async function(options,doFunc){
 module.exports = {
     loadPage,
     renderPdf,
-    screenshotDOMElement
+    screenshotDOMElement,
+    screenshotDOMElements
 };
