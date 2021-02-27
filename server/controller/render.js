@@ -37,11 +37,12 @@ let renderImage = function(req, res, next){
     },async function(page) {
         let imageData =  await browserHelper.screenshotDOMElement(page,element);
         if(imageData){
-            res.send(helper.successMsg({imageData : imageData}))
+            res.send(helper.successMsg({imageData : 'data:image/png;base64,' + imageData}))
         }else{
             res.send(helper.failMsg("render fail"));
         }
     }).catch(function(e){
+        console.error(e.toString());
         res.send(helper.failMsg("fail:" + e.toString()));
     });
 };

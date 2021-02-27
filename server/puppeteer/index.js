@@ -8,7 +8,7 @@ let sleep = async function(timeout){
         },timeout)
     });
 };
-let waitPageComplete = async function(page,timeout,checkPdfRenderCompleteJs){
+let waitPageComplete = async function(page,timeout,checkPageCompleteJs){
     timeout = ~~timeout;
     if(timeout < 1000){
         timeout = 1000;
@@ -16,7 +16,7 @@ let waitPageComplete = async function(page,timeout,checkPdfRenderCompleteJs){
     if(timeout > 60000){
         timeout = 60000;
     }
-    checkPdfRenderCompleteJs = checkPdfRenderCompleteJs || 'window.document.readyState === "complete"';
+    checkPageCompleteJs = ((checkPageCompleteJs || '') + '') || 'window.document.readyState === "complete"';
 
     let loadComplete = false;
     let tickDelay = 100;
@@ -29,8 +29,8 @@ let waitPageComplete = async function(page,timeout,checkPdfRenderCompleteJs){
                 }
                 
                 time += tickDelay;
-                loadComplete = await page.evaluate((checkPdfRenderCompleteJs)).catch(function(e){
-                    console.error("checkPdfRenderCompleteJs error:" + e.toString())
+                loadComplete = await page.evaluate((checkPageCompleteJs)).catch(function(e){
+                    console.error("waitPageComplete error:" + e.toString())
                 });
 
                 if(loadComplete){
@@ -49,13 +49,15 @@ let waitPageComplete = async function(page,timeout,checkPdfRenderCompleteJs){
     });
 };
 
-let screenshotDOMElement = async function(page, selector, saveFile,timeout, padding = 0) {
+let screenshotDOMElement = async function(page, selector, saveFile,encoding,type) {
+    type = type === 'jpeg'?'jpeg':'png';
+    encoding = encoding === 'binary'?'binary':'base64';
     const rect = await page.evaluate(selector => {
         try{
             const element = document.querySelector(selector);
-            const {x, y, width, height} = element.getBoundingClientRect();
+            const {left, top, width, height} = element.getBoundingClientRect();
             if(width * height !== 0){
-                return {left: x, top: y, width, height, id: element.id};
+                return {left, top, width, height};
             }else{
                 return null;
             }
@@ -64,11 +66,13 @@ let screenshotDOMElement = async function(page, selector, saveFile,timeout, padd
         }
     }, selector);
     let option = {
+        type : type,
+        encoding : encoding,
         clip: rect ? {
-            x: rect.left - padding,
-            y: rect.top - padding,
-            width: rect.width + padding * 2,
-            height: rect.height + padding * 2
+            y:    rect.top,
+            x:   rect.left,
+            width:  rect.width,
+            height: rect.height
         } : null
     };
     if(saveFile){
@@ -154,18 +158,21 @@ const getPage = async function(doFunc,timeout){
     timeout = timeout || 30000;
     return new Promise(function(resolve,reject){
         (async function(){
-            let page;
-            let closeCurrentPage = function () {
+            let page,closeCurrentPage;
+            let timeoutId = setTimeout(function () {
+                if(closeCurrentPage){
+                    closeCurrentPage();
+                }
+                reject("timeout " + timeout + "ms");
+            },timeout + 5);
+            
+            closeCurrentPage = function () {
+                clearTimeout(timeoutId);
                 if(page){
                     page.close();
                     page = null;
                 }
             };
-
-            setTimeout(function () {
-                closeCurrentPage();
-                reject("timeout " + timeout + "ms");
-            },timeout + 5);
 
             try{
                 browser = await getBrowser();
@@ -173,8 +180,8 @@ const getPage = async function(doFunc,timeout){
                 await doFunc(page);
                 closeCurrentPage();
             }catch (e) {
-                reject("error:" + e.toString());
                 closeCurrentPage();
+                reject("error:" + e.toString());
             }
         })()
     });
@@ -189,11 +196,11 @@ const loadPage = async function(options,doFunc){
     // 页面加载完成后延迟时间
     let delay = ~~options.delay || 0;
     // 检查PDF实付完成的JS表达式，定时检测直到表达式值为true,是看上渲染
-    let checkPageCompleteJs = (options.checkPageCompleteJs || 'true') + '';
+    let checkPageCompleteJs = options.checkPageCompleteJs;
     // 打开页面的URL
     let pageUrl = (options.pageUrl || '') + '';
 
-    if(/^https?:\/\/.*/.test(pageUrl)){
+    if(!/^https?:\/\/.*/.test(pageUrl)){
         throw "invalid pageUrl param";
     }
     if(timeout < 2000) timeout = 2000;
@@ -217,7 +224,7 @@ const loadPage = async function(options,doFunc){
             console.log("set viewport: width:" + width + ',height:' + height);
             page.setViewport({width:width,height:height});
         }
-        
+        page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.190 Safari/537.36');
         await page.goto(pageUrl);
 
         console.log("wait page load complete ...");
