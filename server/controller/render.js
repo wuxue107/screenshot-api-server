@@ -15,12 +15,14 @@ let renderPdf = function(req, res, next) {
         delay :  ~~postParam.delay,
         checkPageCompleteJs : postParam.checkPageCompleteJs,
     },async function(page) {
-        await browserHelper.renderPdf(page,pdfFullName);
-        if(require('fs').existsSync(pdfFullName)){
-            res.send(helper.successMsg({file : res.origin + pdfFile}))
-        }else{
-            res.send(helper.failMsg("render fail"))
-        }
+        browserHelper.renderPdf(page,pdfFullName).then(function(){
+            if(require('fs').existsSync(pdfFullName)){
+                res.send(helper.successMsg({file : pdfFile}))
+            }else{
+                res.send(helper.failMsg("render fail"))
+            }
+        });
+        
     }).catch(function(e){
         res.send(helper.failMsg("fail:" + e.toString()));
     });

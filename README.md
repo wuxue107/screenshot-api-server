@@ -63,3 +63,27 @@
 ```
 
 ## 生成PDF 
+- API: http://localhost:3000/api/pdf
+- 请求参数：PSOT JSON，请设置一个较长的超时时间
+```javascript
+{
+    // 要截图的网页
+    "pageUrl":"https://bookjs.zhouwuxue.com/eazy-2.html",
+    // 超时时间，可选，默认：3000
+    "timeout":600000,
+    // 检查页面是否渲染完成的js表达式，可选: "true"
+    "checkPageCompleteJs":"window.status === 'PDFComplete'",
+    "delay": 0
+}
+```
+- 响应
+```javascript
+{
+  "code": 0,
+  "msg": "success",
+  "data": {
+    // 拼接上接口的前缀 http://localhost:3000/ 就是完整地址 http://localhost:3000/pdf/1614458263411-glduu.pdf
+    "file": "/pdf/1614458263411-glduu.pdf"
+  }
+}
+```
