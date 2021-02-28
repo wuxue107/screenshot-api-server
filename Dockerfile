@@ -11,7 +11,8 @@ RUN \
     && npm config set sass_binary_site http://cdn.npm.taobao.org/dist/node-sass -g \
     && tar -xvf latest.tar && cd /scrrenshop-api-server && yarn install \
     && npm cache clean --force && yarn cache clean --force \
-    && apt-get clean all && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
+    && apt-get clean all && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
 
 EXPOSE 3000
 ENV PATH /headless-shell:/usr/local/bin:$PATH
