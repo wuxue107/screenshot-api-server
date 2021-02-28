@@ -3,5 +3,5 @@
 /node_modules
 /.idea
 /dist
-*.pdf
-
+/public/pdf/*
+/latest.tar
