@@ -19,9 +19,8 @@ RUN \
       libxmu6 libxmuu1 libxshmfence1 libxtst6 libxv1 libxxf86dga1 libxxf86vm1 x11-utils xdg-utils xkb-data \
     && npm config set registry https://registry.npm.taobao.org -g \
     && npm config set sass_binary_site http://cdn.npm.taobao.org/dist/node-sass -g \
-    && npm cache clean --force && yarn cache clean --force \
     && tar -xvf latest.tar && rm -rf latest.tar && cd /screenshot-api-server && yarn install \
-    && npm cache clean && yarn cache clean --force \
+    && yarn cache clean --force \
     && apt-get clean all \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
