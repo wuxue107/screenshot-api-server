@@ -1,4 +1,4 @@
-FROM node:12-stretch-slim
+FROM node:12-stretch
 MAINTAINER 575065955@qq.com
 
 
