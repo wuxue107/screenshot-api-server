@@ -28,8 +28,9 @@ let renderPdf = function(req, res, next) {
     });
 };
 
-let renderBook = function(){
-    
+let renderBook = function(req, res, next){
+    req.body.checkPageCompleteJs = "window.status === 'PDFComplete'";
+    return renderPdf(req,res,next);
 };
 
 let renderImage = function(req, res, next){
