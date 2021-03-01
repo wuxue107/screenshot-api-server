@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-script_path=$(cd `dirname "$0"`;pwd)
-cd "${script_path}";
+SCRIPT_PATH=$(cd `dirname "$0"`;pwd)
+cd "${SCRIPT_PATH}";
 
 git archive --format=tar --prefix=screenshot-api-server/ -o latest.tar HEAD
 
