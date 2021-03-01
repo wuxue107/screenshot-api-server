@@ -8,7 +8,7 @@ RUN \
     echo "deb http://mirrors.cloud.tencent.com/debian stretch main\ndeb http://mirrors.cloud.tencent.com/debian-security stretch/updates main\ndeb http://mirrors.cloud.tencent.com/debian stretch-updates main" >/etc/apt/sources.list \
     && apt-get clean all && apt-get update \
     && apt-get install --no-install-recommends -y \
-      xfonts-intl-chinese ttf-wqy-microhei  xfonts-wqy \
+      xfonts-intl-chinese ttf-wqy-microhei  xfonts-wqy fonts-arphic-ukai fonts-cwtex-fs fonts-symbola xfonts-intl-european xfonts-intl-japanese \
       libnspr4 libnss3 libexpat1 libfontconfig1 libuuid1 \
       xz-utils dbus libg2-dev libnspr4 libnss3 libexpat1 libfontconfig1 libuuid1 adwaita-icon-theme at-spi2-core dconf-gsettings-backend dconf-service fonts-liberation glib-networking glib-networking-common glib-networking-services gsettings-desktop-schemas libasound2 libasound2-data libatk-bridge2.0-0 libatspi2.0-0 \
       libcolord2 libdconf1 libdrm-amdgpu1 libdrm-intel1 libdrm-nouveau2 libdrm-radeon1 libdrm2 libegl1-mesa libepoxy0  libgbm1 \
