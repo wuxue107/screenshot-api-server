@@ -205,8 +205,19 @@ const getBrowser = async function(){
 
     browser = await puppeteer.launch({
         headless: true,
-        dumpio: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu', '--disable-extensions', '--mute-audio', '–no-first-run']
+        dumpio: false,
+        args: [
+            '--headless',
+            '--no-sandbox', 
+            '--disable-setuid-sandbox', 
+            '--disable-gpu',
+            '--unlimited-storage',
+            '--disable-dev-shm-usage',
+            '--full-memory-crash-report', 
+            '--disable-extensions',
+            '--mute-audio', 
+            '–no-first-run'
+        ]
     });
     
     return browser;

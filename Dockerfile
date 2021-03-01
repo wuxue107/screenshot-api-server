@@ -1,4 +1,4 @@
-FROM node:12-stretch-slim
+FROM node:12-stretch
 MAINTAINER 575065955@qq.com
 
 
@@ -16,7 +16,7 @@ RUN \
       libjson-glib-1.0-0 libjson-glib-1.0-common libllvm3.9 \
       libnspr4 libnss3 libpciaccess0 libproxy1v5 librest-0.7-0 libsensors4 libsoup-gnome2.4-1 libsoup2.4-1 libtxc-dxtn-s2tc libvulkan1 libwayland-client0 \
       libwayland-cursor0 libwayland-egl1-mesa libwayland-server0 libx11-xcb1 libxaw7 libxcb-dri2-0 libxcb-dri3-0 libxcb-glx0 libxcb-present0 libxcb-shape0 libxcb-sync1 libxcb-xfixes0 libxft2 libxkbcommon0 \
-      libxmu6 libxmuu1 libxshmfence1 libxtst6 libxv1 libxxf86dga1 libxxf86vm1 x11-utils xdg-utils xkb-data \
+      libxmu6 libxmuu1 libxshmfence1 libxtst6 libxv1 libxxf86dga1 libxxf86vm1 x11-utils xdg-utils x11-xserver-utils xkb-data \
     && npm config set registry https://registry.npm.taobao.org -g \
     && npm config set sass_binary_site http://cdn.npm.taobao.org/dist/node-sass -g \
     && tar -xvf latest.tar && cd /screenshot-api-server && mkdir public && yarn install \
