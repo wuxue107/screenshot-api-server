@@ -15,7 +15,7 @@ docker run wuxue107/screenshot-api-server
 ```javascript
 {
     // 要截图的网页
-    "pageUrl":"https://bookjs.zhouwuxue.com/simple-4.html",
+    "pageUrl":"https://bookjs.zhouwuxue.com/eazy-2.html",
     // 要截取的节点选择器,可选，默认body
     "element":".nop-page",
     // 超时时间，可选，默认：3000
@@ -43,7 +43,7 @@ docker run wuxue107/screenshot-api-server
 ```javascript
 {
     // 要截图的网页
-    "pageUrl":"https://bookjs.zhouwuxue.com/simple-4.html",
+    "pageUrl":"https://bookjs.zhouwuxue.com/eazy-2.html",
     // 要截取的节点选择器,可选，默认body
     "elements": [".nop-page"],
     // 超时时间，可选，默认：3000
