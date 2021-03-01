@@ -27,6 +27,8 @@ RUN \
 
 EXPOSE 3000
 
+VOLUME /screenshot-api-server/public
+
 ENV PATH /headless-shell:/usr/local/bin:$PATH
 
 ENTRYPOINT /etc/init.d/dbus start && cd /screenshot-api-server && yarn start
