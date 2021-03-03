@@ -13,6 +13,7 @@
     "lodash": "^4.17.21",
     "morgan": "~1.9.1",
     "puppeteer": "^7.1.0",
+    "request": "^2.88.2",
     "string-random": "^0.1.3"
   }
 }

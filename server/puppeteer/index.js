@@ -1,7 +1,7 @@
 // puppeteer 库会下载自带chrome，使用自带chrome启动并渲染
 const puppeteer = require('puppeteer');
 const _ = require('lodash');
-
+const request = require('request');
 // const fs = require('fs');
 const sleep = async function(timeout){
     return new Promise(function(resolve){
@@ -194,6 +194,21 @@ const closeBrowser = function () {
     }
 };
 
+let getDefaultBrowserInfo = function(path){
+    return new Promise( (resolve,reject)=>{
+        request.get({
+            uri:  "http://127.0.0.1:9222/json/version",
+            json: true
+        },function(err, httpResponse, body){
+            if(err){
+                reject(err)
+            }else{
+                resolve(body)
+            }
+        })
+    })
+};
+
 const getBrowser = async function(){
     if(browser) {
         if(browser.isConnected()){
@@ -203,23 +218,31 @@ const getBrowser = async function(){
         closeBrowser();
     }
 
-    browser = await puppeteer.launch({
-        headless: true,
-        dumpio: false,
-        args: [
-            '--headless',
-            '--no-sandbox', 
-            '--disable-setuid-sandbox', 
-            '--disable-gpu',
-            '--unlimited-storage',
-            '--disable-dev-shm-usage',
-            '--full-memory-crash-report', 
-            '--disable-extensions',
-            '--mute-audio', 
-            '–no-first-run'
-        ]
-    });
-    
+    // let isDockerEnv = require('fs').existsSync('/headless-shell');
+    // if(isDockerEnv){
+    //     browser = await puppeteer.launch({
+    //         headless: true,
+    //         dumpio: false,
+    //         args: [
+    //             '--headless',
+    //             '--no-sandbox',
+    //             '--disable-setuid-sandbox',
+    //             '--disable-gpu',
+    //             '--unlimited-storage',
+    //             '--disable-dev-shm-usage',
+    //             '--full-memory-crash-report',
+    //             '--disable-extensions',
+    //             '--mute-audio',
+    //             '–no-first-run'
+    //         ]
+    //     });
+    // }else{
+        let res = await getDefaultBrowserInfo();
+        console.log(res);
+        //直接连接已经存在的 Chrome
+        browser = await puppeteer.connect({browserWSEndpoint: res.webSocketDebuggerUrl});
+    //}
+
     return browser;
 };
 
