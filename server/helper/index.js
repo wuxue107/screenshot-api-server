@@ -25,9 +25,25 @@ let helper = {
         return helper.apiMsg(code,msg,data);
     },
 
-    echoMsg : function () {
+    getRootPath : function (path) {
+        if(path === undefined){
+            path = '';
+        }else{
+            path = '/' + path;
+        }
+        
+        return __dirname + '/../..' + path;
+    },
+    
+    getPdfPath : function (path) {
+        if(path === undefined){
+            path = '';
+        }else{
+            path = '/' + path;
+        }
 
-    }
+        return __dirname + '/../../public/pdf' + path;
+    },
 };
 
 module.exports = helper;

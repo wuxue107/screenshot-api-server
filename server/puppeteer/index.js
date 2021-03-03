@@ -2,7 +2,8 @@
 const puppeteer = require('puppeteer');
 const _ = require('lodash');
 const request = require('request');
-// const fs = require('fs');
+const fs = require('fs');
+
 const sleep = async function(timeout){
     return new Promise(function(resolve){
         setTimeout(function(){
@@ -246,8 +247,6 @@ const getBrowser = async function(){
     return browser;
 };
 
-getBrowser();
-
 const getPage = async function(doFunc,timeout){
     timeout = timeout || 30000;
     return new Promise(function(resolve,reject){
@@ -331,6 +330,15 @@ const loadPage = async function(options,doFunc){
     },timeout);
 };
 
+const initBrowser = async function(){
+    await getBrowser();
+    let pdfPath = helper.getPdfPath();
+    if(!fs.statSync(pdfPath).isDirectory()){
+        fs.mkdirSync(pdfPath);
+    }
+};
+
+initBrowser();
 
 module.exports = {
     loadPage,
