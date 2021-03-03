@@ -6,7 +6,7 @@ const _ = require('lodash');
 let renderPdf = function(req, res, next) {
     let postParam = req.body;
     // 渲染超时时间
-    let pdfFile = '/pdf/'  + (new Date()).getTime() + '-' + stringRandom(5, { numbers: false }) + '.pdf';
+    let pdfFile = (new Date()).getTime() + '-' + stringRandom(5, { numbers: false }) + '.pdf';
     let pdfFullName = helper.getPdfPath(pdfFile);
     
     browserHelper.loadPage({
