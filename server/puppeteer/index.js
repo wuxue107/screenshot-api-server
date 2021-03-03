@@ -331,7 +331,7 @@ const loadPage = async function(options,doFunc){
 const initBrowser = async function(){
     await getBrowser();
     let pdfPath = helper.getPdfPath();
-    if(!fs.statSync(pdfPath).isDirectory()){
+    if(!fs.existsSync(pdfPath)){
         fs.mkdirSync(pdfPath);
     }
 };
