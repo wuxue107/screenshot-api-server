@@ -218,30 +218,30 @@ const getBrowser = async function(){
         closeBrowser();
     }
 
-    // let isDockerEnv = require('fs').existsSync('/headless-shell');
-    // if(isDockerEnv){
-    //     browser = await puppeteer.launch({
-    //         headless: true,
-    //         dumpio: false,
-    //         args: [
-    //             '--headless',
-    //             '--no-sandbox',
-    //             '--disable-setuid-sandbox',
-    //             '--disable-gpu',
-    //             '--unlimited-storage',
-    //             '--disable-dev-shm-usage',
-    //             '--full-memory-crash-report',
-    //             '--disable-extensions',
-    //             '--mute-audio',
-    //             '–no-first-run'
-    //         ]
-    //     });
-    // }else{
+    let isDockerEnv = require('fs').existsSync('/headless-shell');
+    if(!isDockerEnv){
+        browser = await puppeteer.launch({
+            headless: true,
+            dumpio: false,
+            args: [
+                '--headless',
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-gpu',
+                '--unlimited-storage',
+                '--disable-dev-shm-usage',
+                '--full-memory-crash-report',
+                '--disable-extensions',
+                '--mute-audio',
+                '–no-first-run'
+            ]
+        });
+    }else{
         let res = await getDefaultBrowserInfo();
         console.log(res);
         //直接连接已经存在的 Chrome
         browser = await puppeteer.connect({browserWSEndpoint: res.webSocketDebuggerUrl});
-    //}
+    }
 
     return browser;
 };
