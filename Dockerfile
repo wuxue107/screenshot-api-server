@@ -12,8 +12,8 @@ RUN \
     && npm config set sass_binary_site http://cdn.npm.taobao.org/dist/node-sass -g \
     && npm install -g yarn \
     && tar -xvf latest.tar && cd /screenshot-api-server && mkdir public && yarn install \
-    && npm cache clean ---force && && yarn cache clean --force \
-    && rm -rf latest.tar && && apt-get clean all && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* 
+    && npm cache clean ---force && yarn cache clean --force \
+    && rm -rf latest.tar && apt-get clean all && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* 
 
 EXPOSE 9222 3000
 
