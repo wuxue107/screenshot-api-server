@@ -8,8 +8,9 @@ COPY latest.tar /
 RUN \
     sed -i 's/deb.debian.org/mirrors.cloud.tencent.com/g;s/security.debian.org/mirrors.cloud.tencent.com/g;s/security.debian.org/mirrors.cloud.tencent.com/g' /etc/apt/sources.list \
     && apt-get update \
-    && apt-get install  --no-install-recommends -y curl xfonts-intl-chinese ttf-wqy-microhei  xfonts-wqy fonts-arphic-ukai fonts-cwtex-fs fonts-symbola xfonts-intl-european xfonts-intl-japanese \
-    && curl -sL https://deb.nodesource.com/setup_12.x | bash - \
+    && apt-get install  --no-install-recommends -y \
+    curl xfonts-intl-chinese ttf-wqy-microhei  xfonts-wqy fonts-arphic-ukai fonts-cwtex-fs fonts-symbola xfonts-intl-european xfonts-intl-japanese \
+    nodejs npm \
     && npm config set registry https://registry.npm.taobao.org -g \
     && npm config set sass_binary_site http://cdn.npm.taobao.org/dist/node-sass -g \
     && npm install -g yarn \
