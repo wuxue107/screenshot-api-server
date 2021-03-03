@@ -17,7 +17,7 @@ let renderPdf = function(req, res, next) {
     },async function(page) {
         await browserHelper.renderPdf(page,pdfFullName);
         if(require('fs').existsSync(pdfFullName)){
-            res.send(helper.successMsg({file : pdfFile}))
+            res.send(helper.successMsg({file : 'pdf/' + pdfFile}))
         }else{
             res.send(helper.failMsg("render fail"))
         }
