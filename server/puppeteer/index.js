@@ -224,6 +224,10 @@ const getBrowser = async function(){
         browser =  await puppeteer.launch({
             headless: true,
             dumpio: false,
+            defaultViewport: {
+                width: 1280,
+                height: 960
+            },
             args: [
                 '--headless',
                 '--no-sandbox',
@@ -234,7 +238,8 @@ const getBrowser = async function(){
                 '--full-memory-crash-report',
                 '--disable-extensions',
                 '--mute-audio',
-                '–no-first-run'
+                '–no-first-run',
+                '--start-maximized'
             ]
         });
     // }else{
