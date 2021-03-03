@@ -218,9 +218,9 @@ const getBrowser = async function(){
         closeBrowser();
     }
 
-    let isDockerEnv = require('fs').existsSync('/headless-shell');
-    if(!isDockerEnv){
-        browser = await puppeteer.launch({
+    // let isDockerEnv = require('fs').existsSync('/headless-shell');
+    // if(!isDockerEnv){
+        browser =  await puppeteer.launch({
             headless: true,
             dumpio: false,
             args: [
@@ -236,12 +236,12 @@ const getBrowser = async function(){
                 '–no-first-run'
             ]
         });
-    }else{
-        let res = await getDefaultBrowserInfo();
-        console.log(res);
-        //直接连接已经存在的 Chrome
-        browser = await puppeteer.connect({browserWSEndpoint: res.webSocketDebuggerUrl});
-    }
+    // }else{
+    //     let res = await getDefaultBrowserInfo();
+    //     console.log(res);
+    //     //直接连接已经存在的 Chrome
+    //     browser = await puppeteer.connect({browserWSEndpoint: res.webSocketDebuggerUrl});
+    // }
 
     return browser;
 };
