@@ -218,36 +218,28 @@ const getBrowser = async function(){
         
         closeBrowser();
     }
-
-    // let isDockerEnv = require('fs').existsSync('/headless-shell');
-    // if(!isDockerEnv){
-        browser =  await puppeteer.launch({
-            headless: true,
-            dumpio: false,
-            defaultViewport: {
-                width: 1280,
-                height: 960
-            },
-            args: [
-                '--headless',
-                '--no-sandbox',
-                '--disable-setuid-sandbox',
-                '--disable-gpu',
-                '--unlimited-storage',
-                '--disable-dev-shm-usage',
-                '--full-memory-crash-report',
-                '--disable-extensions',
-                '--mute-audio',
-                '–no-first-run',
-                '--start-maximized'
-            ]
-        });
-    // }else{
-    //     let res = await getDefaultBrowserInfo();
-    //     console.log(res);
-    //     //直接连接已经存在的 Chrome
-    //     browser = await puppeteer.connect({browserWSEndpoint: res.webSocketDebuggerUrl});
-    // }
+    
+    browser =  await puppeteer.launch({
+        headless: true,
+        dumpio: false,
+        defaultViewport: {
+            width: 1280,
+            height: 960
+        },
+        args: [
+            '--headless',
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-gpu',
+            '--unlimited-storage',
+            '--disable-dev-shm-usage',
+            '--full-memory-crash-report',
+            '--disable-extensions',
+            '--mute-audio',
+            '–no-first-run',
+            '--start-maximized'
+        ]
+    });
 
     return browser;
 };
