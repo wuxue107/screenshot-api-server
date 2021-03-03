@@ -3,6 +3,7 @@ const puppeteer = require('puppeteer');
 const _ = require('lodash');
 const request = require('request');
 const fs = require('fs');
+const helper = require('../helper');
 
 const sleep = async function(timeout){
     return new Promise(function(resolve){
