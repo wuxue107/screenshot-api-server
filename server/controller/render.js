@@ -6,7 +6,7 @@ const moment = require('moment');
 const renderPdf = function(req, res, next) {
     let postParam = req.body;
     // 渲染超时时间
-    let pdfFileName = (new Date()).getTime() + '-' + stringRandom(5, { numbers: false }) + '.pdf';
+    let pdfFileName = stringRandom(20, { numbers: false }) + '.pdf';
     let date = moment(Date.now()).format('YYYY-MM-DD');
     let pdfDailyPath = helper.getPdfPath(date);
     if(!require('fs').existsSync(pdfDailyPath)){
