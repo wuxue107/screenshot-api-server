@@ -2,12 +2,18 @@ let helper = require('../helper/index');
 let browserHelper = require('../puppeteer/index');
 const stringRandom = require('string-random');
 const _ = require('lodash');
-
+const moment = require('moment');
 const renderPdf = function(req, res, next) {
     let postParam = req.body;
     // 渲染超时时间
-    let pdfFile = (new Date()).getTime() + '-' + stringRandom(5, { numbers: false }) + '.pdf';
-    let pdfFullName = helper.getPdfPath(pdfFile);
+    let pdfFileName = (new Date()).getTime() + '-' + stringRandom(5, { numbers: false }) + '.pdf';
+    let date = moment(Date.now()).format('YYYY-MM-DD');
+    let pdfDailyPath = helper.getPdfPath(date);
+    if(!require('fs').existsSync(pdfDailyPath)){
+        require('fs').mkdirSync(pdfDailyPath,{recursive:true})
+    }
+    
+    let pdfFullName = pdfDailyPath + '/' + pdfFileName;
     
     browserHelper.loadPage({
         pageUrl : postParam.pageUrl,
@@ -17,7 +23,7 @@ const renderPdf = function(req, res, next) {
     },async function(page) {
         await browserHelper.renderPdf(page,pdfFullName);
         if(require('fs').existsSync(pdfFullName)){
-            res.send(helper.successMsg({file : 'pdf/' + pdfFile}))
+            res.send(helper.successMsg({file : 'pdf/' + date + '/' + pdfFileName}))
         }else{
             res.send(helper.failMsg("render fail"))
         }
@@ -79,34 +85,36 @@ const renderImages = function(req, res, next){
 
 const downloadPdf = function(req, res, next) {
     let fileName = req.query.fileName || 'output.pdf';
-    let file = req.params.file;
-    fileName = fileName.replace(/[\r\n<>\\\/\|\:\'\"\*\?]/g,"")
-    let headers = {
-        "Content-type":"application/octet-stream",
-        "Content-Transfer-Encoding":"binary",
-    };
-    
-    if((/Firefox/i).test(req.userAgent)){
-        headers['Content-Disposition'] = 'filename*="utf8\'\'' + fileName + '"';
-    } else if((/MSIE|Edge/i).test(req.userAgent)){
-        headers['Content-Disposition'] = "attachment;filename=" + encodeURI(fileName).replace('+','%20');
-    }else{
-        headers['Content-Disposition'] = "attachment;filename=" + encodeURI(fileName)
-    }
+    let file = req.params[0];
+
     
     let pdfPath = helper.getPdfPath();
     if(require('fs').exists(helper.getPdfPath(file),function (isExist) {
         if(isExist){
+            fileName = fileName.replace(/[\r\n<>\\\/\|\:\'\"\*\?]/g,"")
+            let headers = {
+                "Content-type":"application/octet-stream",
+                "Content-Transfer-Encoding":"binary",
+            };
+
+            if((/Firefox/i).test(req.userAgent)){
+                headers['Content-Disposition'] = 'filename*="utf8\'\'' + fileName + '"';
+            } else if((/MSIE|Edge/i).test(req.userAgent)){
+                headers['Content-Disposition'] = "attachment;filename=" + encodeURI(fileName).replace('+','%20');
+            }else{
+                headers['Content-Disposition'] = "attachment;filename=" + encodeURI(fileName)
+            }
+            
             try{
                 res.sendFile(file,{
                     headers : headers,
                     root : pdfPath
                 })
             }catch (e) {
-                res.send(500).send('Server Error');
+                res.sendStatus(500).send('Server Error');
             }
         }else{
-            res.send(404).send('Not Found');
+            res.sendStatus(404).send('Not Found');
         }
     }));
 };
