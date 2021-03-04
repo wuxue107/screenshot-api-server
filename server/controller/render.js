@@ -93,14 +93,22 @@ const downloadPdf = function(req, res, next) {
     }else{
         headers['Content-Disposition'] = "attachment;filename=" + encodeURI(fileName)
     }
-    try{
-        res.sendFile(file,{
-            headers : headers,
-            root : helper.getPdfPath(),
-        })
-    }catch (e) {
-        res.send(404,"404");
-    }
+    
+    let pdfPath = helper.getPdfPath();
+    if(require('fs').exists(helper.getPdfPath(file),function (isExist) {
+        if(isExist){
+            try{
+                res.sendFile(file,{
+                    headers : headers,
+                    root : pdfPath
+                })
+            }catch (e) {
+                res.send(500).send('Server Error');
+            }
+        }else{
+            res.send(404).send('Not Found');
+        }
+    }));
 };
 
 module.exports = {
