@@ -1,10 +1,13 @@
 # 网页截图 和 生成PDF Api服务 
 
+## 使用docker方式
+- docker仓库为：wuxue107/screenshot-api-server
+- 容器内目录web根目录 /screenshot-api-server/public 为可挂载目录，里面可以放一些静态文件
+- 使用运行下面命令，会将当前目录作为，web根目录运行web服务，
 
-## 启动
 ```bash
-docker create -p 3000:3000 -v ${PWD}/public:/screenshot-api-server/public --name=screenshot-api-server wuxue107/screenshot-api-server
-docker run wuxue107/screenshot-api-server
+docker pull wuxue107/screenshot-api-server:1.0.0
+docker run -p 3000:3000 -td --rm -v ${PWD}:/screenshot-api-server/public --name=screenshot-api-server wuxue107/screenshot-api-server:1.0.0
 ```
 
 ## 截图
