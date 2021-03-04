@@ -80,27 +80,25 @@ const renderImages = function(req, res, next){
 const downloadPdf = function(req, res, next) {
     let fileName = req.query.fileName || 'output.pdf';
     let file = req.params.file;
+    fileName = fileName.replace(/[\r\n<>\\\/\|\:\'\"\*\?]/g,"")
+    let headers = {
+        "Content-type":"application/octet-stream",
+        "Content-Transfer-Encoding":"binary",
+    };
+    
+    if((/Firefox/i).test(req.userAgent)){
+        headers['Content-Disposition'] = 'filename*="utf8\'\'' + fileName + '"';
+    } else if((/MSIE|Edge/i).test(req.userAgent)){
+        headers['Content-Disposition'] = "attachment;filename=" + encodeURI(fileName).replace('+','%20');
+    }else{
+        headers['Content-Disposition'] = "attachment;filename=" + encodeURI(fileName)
+    }
     try{
-        fileName = fileName.replace(/[\r\n<>\\\/\|\:\'\"\*\?]/g,"")
-        let headers = {
-            "Content-type":"application/octet-stream",
-            "Content-Transfer-Encoding":"binary",
-        };
-        
-        if((/Firefox/i).test(req.userAgent)){
-            headers['Content-Disposition'] = 'filename*="utf8\'\'' + fileName + '"';
-        } else if((/MSIE|Edge/i).test(req.userAgent)){
-            headers['Content-Disposition'] = "attachment;filename=" + encodeURI(fileName).replace('+','%20');
-        }else{
-            headers['Content-Disposition'] = "attachment;filename=" + encodeURI(fileName)
-        }
-        
         res.sendFile(file,{
             headers : headers,
             root : helper.getPdfPath(),
-        });
+        })
     }catch (e) {
-        console.log(e)
         res.send(404,"404");
     }
 };
