@@ -9,7 +9,12 @@
 docker pull wuxue107/screenshot-api-server:1.0.0
 docker run -p 3000:3000 -td --rm -v ${PWD}:/screenshot-api-server/public --name=screenshot-api-server wuxue107/screenshot-api-server:1.0.0
 ```
+## 本地使用
+```bash
+yarn && yarn start
+```
 
+# API 接口
 ## 截图
 
 ### 单张图片截取
