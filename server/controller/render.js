@@ -3,6 +3,7 @@ let browserHelper = require('../puppeteer/index');
 const stringRandom = require('string-random');
 const _ = require('lodash');
 const moment = require('moment');
+
 const renderPdf = function(req, res, next) {
     let postParam = req.body;
     // 渲染超时时间
@@ -34,6 +35,7 @@ const renderPdf = function(req, res, next) {
 
 const renderBook = function(req, res, next){
     req.body.checkPageCompleteJs = "window.status === 'PDFComplete'";
+    req.body.timeout = req.body.timeout || 15000;
     return renderPdf(req,res,next);
 };
 
@@ -86,8 +88,6 @@ const renderImages = function(req, res, next){
 const downloadPdf = function(req, res, next) {
     let fileName = req.query.fileName || 'output.pdf';
     let file = req.params[0];
-
-    
     let pdfPath = helper.getPdfPath();
     if(require('fs').exists(helper.getPdfPath(file),function (isExist) {
         if(isExist){
@@ -96,15 +96,10 @@ const downloadPdf = function(req, res, next) {
                 "Content-type":"application/octet-stream",
                 "Content-Transfer-Encoding":"binary",
             };
+            // let userAgent = req.headers['user-agent'];
+            // console.log(userAgent);
 
-            if((/Firefox/i).test(req.userAgent)){
-                headers['Content-Disposition'] = 'filename*="utf8\'\'' + fileName + '"';
-            } else if((/MSIE|Edge/i).test(req.userAgent)){
-                headers['Content-Disposition'] = "attachment;filename=" + encodeURI(fileName).replace('+','%20');
-            }else{
-                headers['Content-Disposition'] = "attachment;filename=" + encodeURI(fileName)
-            }
-            
+            headers['Content-Disposition'] = 'attachment;filename="' + encodeURI(fileName).replace('+','%20') + '"';
             try{
                 res.sendFile(file,{
                     headers : headers,
