@@ -98,7 +98,10 @@ yarn && yarn start
   "code": 0,
   "msg": "success",
   "data": {
-    // 拼接上接口的前缀 http://localhost:3000/ 就是完整地址 http://localhost:3000/pdf/1614458263411-glduu.pdf
+    // 拼接上接口的前缀 http://localhost:3000/ 就是完整PDF地址 
+    // http://localhost:3000/pdf/1614458263411-glduu.pdf
+    // 拼接上接口的前缀 http://localhost:3000/download/可以就可生成在浏览器上的下载链接
+    // http://localhost:3000/download/pdf/1614458263411-glduu.pdf
     "file": "/pdf/1614458263411-glduu.pdf"
   }
 }
