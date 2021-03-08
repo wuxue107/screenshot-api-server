@@ -6,8 +6,8 @@
 - 使用运行下面命令，会将当前目录作为，web根目录运行web服务，
 
 ```bash
-docker pull wuxue107/screenshot-api-server:1.0.0
-docker run -p 3000:3000 -td --rm -v ${PWD}:/screenshot-api-server/public --name=screenshot-api-server wuxue107/screenshot-api-server:1.0.0
+docker pull wuxue107/screenshot-api-server:1.2.0
+docker run -p 3000:3000 -td --rm -v ${PWD}:/screenshot-api-server/public --name=screenshot-api-server wuxue107/screenshot-api-server:1.2.0
 ```
 ## 本地使用
 ```bash
@@ -23,15 +23,15 @@ yarn && yarn start
 ```javascript
 {
     // 要截图的网页
-    "pageUrl":"https://bookjs.zhouwuxue.com/eazy-2.html",
+    "pageUrl":"https://gitee.com/wuxue107",
     // 要截取的节点选择器,可选，默认body
-    "element":".nop-page",
+    "element":"body",
     // 超时时间，可选，默认：3000
     "timeout": 5000,
     // 检查页面是否渲染完成的js表达式，可选，默认: "true"
-    "checkPageCompleteJs":"window.status === 'PDFComplete'",
-    // 页面完成后（checkPageCompleteJs返回为true后）延迟的时间
-    "delay": 0
+    "checkPageCompleteJs": "document.readyState === 'complete'",
+    // 页面完成后（checkPageCompleteJs返回为true后）延迟的时间，可选，默认：0
+    "delay": 100
 }
 ```
 - 响应
@@ -51,15 +51,15 @@ yarn && yarn start
 ```javascript
 {
     // 要截图的网页
-    "pageUrl":"https://bookjs.zhouwuxue.com/eazy-2.html",
+    "pageUrl": "https://gitee.com/wuxue107",
     // 要截取的节点选择器,可选，默认body
-    "elements": [".nop-page"],
+    "elements": [".card"],
     // 超时时间，可选，默认：3000
     "timeout": 10000,
-    // 检查页面是否渲染完成的js表达式，可选: "true"
-    "checkPageCompleteJs":"window.status === 'PDFComplete'",
-    // 页面完成后（checkPageCompleteJs返回为true后）延迟的时间
-    "delay": 0
+    // 检查页面是否渲染完成的js表达式，可选，默认: "true"
+    "checkPageCompleteJs": "document.readyState === 'complete'",
+    // 页面完成后（checkPageCompleteJs返回为true后）延迟的时间，可选，默认：0
+    "delay": 100
 }
 ```
 - 响应
@@ -69,7 +69,7 @@ yarn && yarn start
   "msg": "success",
   "data": {
     "images": {
-       ".nop-page": [
+       ".card": [
             "data:image/png;base64,...",
        ]
     } 
@@ -83,12 +83,13 @@ yarn && yarn start
 ```javascript
 {
     // 要截图的网页
-    "pageUrl":"https://bookjs.zhouwuxue.com/eazy-2.html",
+    "pageUrl": "https://bookjs.zhouwuxue.com/eazy-2.html",
     // 超时时间，可选，默认：3000
     "timeout": 20000,
-    // 检查页面是否渲染完成的js表达式，可选: "true"
-    "checkPageCompleteJs":"window.status === 'PDFComplete'",
-    "delay": 0
+    // 检查页面是否渲染完成的js表达式，可选，默认: "true"
+    "checkPageCompleteJs": "window.status === 'PDFComplete'",
+    // 页面完成后（checkPageCompleteJs返回为true后）延迟的时间，可选，默认：0
+    "delay": 100
 }
 ```
 - 响应，生成的pdf文件存放在web可挂载的web目录下,路径/pdf/xxxx.pdf

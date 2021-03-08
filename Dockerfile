@@ -29,6 +29,8 @@ EXPOSE 3000
 
 
 ENV PATH /usr/local/bin:$PATH
+ENV NODE_ENV production
+
 VOLUME /screenshot-api-server/public
 
 ENTRYPOINT /etc/init.d/dbus start && cd /screenshot-api-server && yarn start
