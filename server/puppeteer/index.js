@@ -1,6 +1,5 @@
 // puppeteer 库会下载自带chrome，使用自带chrome启动并渲染
 const puppeteer = require('puppeteer');
-const request = require('request');
 const fs = require('fs');
 const helper = require('../helper');
 
@@ -232,21 +231,6 @@ const closeBrowser = function () {
             console.log("close browser fail:" + e.toString())
         }
     }
-};
-
-const getDefaultBrowserInfo = function(path){
-    return new Promise( (resolve,reject)=>{
-        request.get({
-            uri:  "http://127.0.0.1:9222/json/version",
-            json: true
-        },function(err, httpResponse, body){
-            if(err){
-                reject(err)
-            }else{
-                resolve(body)
-            }
-        })
-    })
 };
 
 /**
