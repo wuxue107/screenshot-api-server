@@ -1,6 +1,5 @@
 // puppeteer 库会下载自带chrome，使用自带chrome启动并渲染
 const puppeteer = require('puppeteer');
-const _ = require('lodash');
 const request = require('request');
 const fs = require('fs');
 const helper = require('../helper');
@@ -121,14 +120,14 @@ const screenshotDOMElements = async function(page, selectors,encoding,type) {
     type = type === 'jpeg'?'jpeg':'png';
     encoding = encoding === 'binary'?'binary':'base64';
 
-    if(!_.isArray(selectors)){
+    if(Array.isArray(selectors)){
         throw "invalid screenshot selectors";
     }
     
     let images = {};
     for(let i in selectors){
         let selector = selectors[i];
-        if(!_.isString(selector)){
+        if(typeof selector !== 'string'){
             continue;
         }
         let rects = await page.evaluate(selector => {
