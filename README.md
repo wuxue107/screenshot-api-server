@@ -23,13 +23,13 @@ yarn && yarn start
 ```javascript
 {
     // 要截图的网页
-    "pageUrl":"https://bookjs.zhouwuxue.com/eazy-2.html",
+    "pageUrl":"https://gitee.com/wuxue107",
     // 要截取的节点选择器,可选，默认body
-    "element":".nop-page",
+    "element":"body",
     // 超时时间，可选，默认：3000
     "timeout": 5000,
     // 检查页面是否渲染完成的js表达式，可选，默认: "true"
-    "checkPageCompleteJs":"window.status === 'PDFComplete'",
+    "checkPageCompleteJs": "document.readyState === 'complete'",
     // 页面完成后（checkPageCompleteJs返回为true后）延迟的时间，可选，默认：0
     "delay": 100
 }
@@ -51,13 +51,13 @@ yarn && yarn start
 ```javascript
 {
     // 要截图的网页
-    "pageUrl": "https://bookjs.zhouwuxue.com/eazy-2.html",
+    "pageUrl": "https://gitee.com/wuxue107",
     // 要截取的节点选择器,可选，默认body
-    "elements": [".nop-page"],
+    "elements": [".card"],
     // 超时时间，可选，默认：3000
     "timeout": 10000,
     // 检查页面是否渲染完成的js表达式，可选，默认: "true"
-    "checkPageCompleteJs": "window.status === 'PDFComplete'",
+    "checkPageCompleteJs": "document.readyState === 'complete'",
     // 页面完成后（checkPageCompleteJs返回为true后）延迟的时间，可选，默认：0
     "delay": 100
 }
