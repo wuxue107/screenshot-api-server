@@ -30,8 +30,8 @@ yarn && yarn start
     "timeout": 5000,
     // 检查页面是否渲染完成的js表达式，可选，默认: "true"
     "checkPageCompleteJs":"window.status === 'PDFComplete'",
-    // 页面完成后（checkPageCompleteJs返回为true后）延迟的时间
-    "delay": 0
+    // 页面完成后（checkPageCompleteJs返回为true后）延迟的时间，可选，默认：0
+    "delay": 100
 }
 ```
 - 响应
@@ -56,10 +56,10 @@ yarn && yarn start
     "elements": [".nop-page"],
     // 超时时间，可选，默认：3000
     "timeout": 10000,
-    // 检查页面是否渲染完成的js表达式，可选: "true"
+    // 检查页面是否渲染完成的js表达式，可选，默认: "true"
     "checkPageCompleteJs":"window.status === 'PDFComplete'",
-    // 页面完成后（checkPageCompleteJs返回为true后）延迟的时间
-    "delay": 0
+    // 页面完成后（checkPageCompleteJs返回为true后）延迟的时间，可选，默认：0
+    "delay": 100
 }
 ```
 - 响应
@@ -86,9 +86,10 @@ yarn && yarn start
     "pageUrl":"https://bookjs.zhouwuxue.com/eazy-2.html",
     // 超时时间，可选，默认：3000
     "timeout": 20000,
-    // 检查页面是否渲染完成的js表达式，可选: "true"
+    // 检查页面是否渲染完成的js表达式，可选，默认: "true"
     "checkPageCompleteJs":"window.status === 'PDFComplete'",
-    "delay": 0
+    // 页面完成后（checkPageCompleteJs返回为true后）延迟的时间，可选，默认：0
+    "delay": 100
 }
 ```
 - 响应，生成的pdf文件存放在web可挂载的web目录下,路径/pdf/xxxx.pdf
