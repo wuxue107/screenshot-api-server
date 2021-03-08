@@ -69,7 +69,7 @@ yarn && yarn start
   "msg": "success",
   "data": {
     "images": {
-       ".nop-page": [
+       ".card": [
             "data:image/png;base64,...",
        ]
     } 
