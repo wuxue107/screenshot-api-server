@@ -12,6 +12,16 @@ const sleep = async function(timeout){
         },timeout)
     });
 };
+
+/**
+ * 页面打开后，通过checkPageCompleteJs代码段在网页里的js环境执行，检查网页是否加载完整
+ * 
+ * 
+ * @param page 页面对象
+ * @param timeout 检查时的超时时间，超时则 reject
+ * @param checkPageCompleteJs 检查页面是否加载完整的js代码，完整返回true; 如： 'window.document.readyState === "complete"'
+ * @returns {Promise}
+ */
 const waitPageComplete = async function(page,timeout,checkPageCompleteJs){
     timeout = ~~timeout;
     if(timeout < 1000){
@@ -53,6 +63,17 @@ const waitPageComplete = async function(page,timeout,checkPageCompleteJs){
     });
 };
 
+/**
+ * 从页面的一个html节点，截取一张图片
+ * 
+ * @param page
+ * @param {string} selector html节点的css选择器
+ * @param {string} saveFile 保存的文件,传空则直接返回图片内容，默认 undefined
+ * @param {string} encoding 返回数据格式化 binary或base64，默认:base64
+ * @param {string} type 图片类型,jpeg或png, 默认png
+ * 
+ * @returns {Promise<string|Buffer|void|*>}
+ */
 const screenshotDOMElement = async function(page, selector, saveFile,encoding,type) {
     type = type === 'jpeg'?'jpeg':'png';
     encoding = encoding === 'binary'?'binary':'base64';
@@ -86,7 +107,17 @@ const screenshotDOMElement = async function(page, selector, saveFile,encoding,ty
     return await page.screenshot(option);
 };
 
-const screenshotDOMElements = async function(page, selectors, savePath,encoding,type) {
+/**
+ * 从页面的html节点，截取多张图片
+ *
+ * @param page
+ * @param {string[]} selectors 要截取图片的css选择器列表
+ * @param {string} encoding 返回数据格式化 binary或base64，默认:base64
+ * @param {string} type 图片类型,jpeg或png, 默认png
+ *
+ * @returns {Promise<Object>}
+ */
+const screenshotDOMElements = async function(page, selectors,encoding,type) {
     type = type === 'jpeg'?'jpeg':'png';
     encoding = encoding === 'binary'?'binary':'base64';
 
@@ -130,9 +161,6 @@ const screenshotDOMElements = async function(page, selectors, savePath,encoding,
                     height: rect.height
                 } : null
             };
-            if(savePath){
-                //option.path = saveFile;
-            }
             
             let imageData = await page.screenshot(option);
             if(imageData){
@@ -144,6 +172,14 @@ const screenshotDOMElements = async function(page, selectors, savePath,encoding,
     return images;
 };
 
+/**
+ * 从网页生成PDF文件
+ * 
+ * @param page
+ * @param saveFile 保存pdf文件路径
+ * 
+ * @returns {Promise<*|Buffer>}
+ */
 const renderPdf = async function(page,saveFile){
     let option = {
         //landscape : false,
@@ -185,6 +221,9 @@ const renderPdf = async function(page,saveFile){
 
 let browser;
 
+/**
+ * 关闭浏览器
+ */
 const closeBrowser = function () {
     if(browser){
         try{
@@ -196,7 +235,7 @@ const closeBrowser = function () {
     }
 };
 
-let getDefaultBrowserInfo = function(path){
+const getDefaultBrowserInfo = function(path){
     return new Promise( (resolve,reject)=>{
         request.get({
             uri:  "http://127.0.0.1:9222/json/version",
@@ -211,6 +250,10 @@ let getDefaultBrowserInfo = function(path){
     })
 };
 
+/**
+ * 获取浏览器实例
+ * @returns {Promise<Browser|*>}
+ */
 const getBrowser = async function(){
     if(browser) {
         if(browser.isConnected()){
@@ -245,6 +288,13 @@ const getBrowser = async function(){
     return browser;
 };
 
+/**
+ * 获取新页面实例
+ * 
+ * @param doFunc
+ * @param timeout
+ * @returns {Promise<Page>}
+ */
 const getPage = async function(doFunc,timeout){
     timeout = timeout || 30000;
     return new Promise(function(resolve,reject){
@@ -279,6 +329,20 @@ const getPage = async function(doFunc,timeout){
     });
 };
 
+/**
+ * 打开新页面，并等待加载页面加载完整
+ * 
+ * @param {Object} options 打开页面选项参数
+ *  pageUrl 打开页面的URL
+ *  timeout 打开页面超时
+ *  width 可视区宽度
+ *  height 可视区高度
+ *  checkPageCompleteJs 检查页面加载完整,代码段
+ *  delay 加载完整后延迟时间
+ * @param {function} doFunc(page) 页面加载完整，处理函数
+ *
+ * @returns {Promise<Page>}
+ */
 const loadPage = async function(options,doFunc){
     // 页面打开后，关闭超时时间
     let timeout = ~~options.timeout;
@@ -328,6 +392,11 @@ const loadPage = async function(options,doFunc){
     },timeout);
 };
 
+/**
+ * 初始化浏览器
+ * 
+ * @returns {Promise<void>}
+ */
 const initBrowser = async function(){
     await getBrowser();
     let pdfPath = helper.getPdfPath();
