@@ -6,8 +6,8 @@
 - 使用运行下面命令，会将当前目录作为，web根目录运行web服务，
 
 ```bash
-docker pull wuxue107/screenshot-api-server:1.0.0
-docker run -p 3000:3000 -td --rm -v ${PWD}:/screenshot-api-server/public --name=screenshot-api-server wuxue107/screenshot-api-server:1.0.0
+docker pull wuxue107/screenshot-api-server:1.2.0
+docker run -p 3000:3000 -td --rm -v ${PWD}:/screenshot-api-server/public --name=screenshot-api-server wuxue107/screenshot-api-server:1.2.0
 ```
 ## 本地使用
 ```bash
