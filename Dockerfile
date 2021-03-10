@@ -22,7 +22,7 @@ RUN \
     && tar -xvf latest.tar && cd /screenshot-api-server && mkdir public && yarn install \
     && yarn cache clean --force \
     && apt-get clean all \
-    && rm -rf latest.tar && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    && rm -rf latest.tar && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /etc/rc.*/*dbus
 
 
 EXPOSE 3000
@@ -32,5 +32,5 @@ ENV PATH /usr/local/bin:$PATH
 ENV NODE_ENV production
 
 VOLUME /screenshot-api-server/public
-WORKDIR /screenshot-api-server
-ENTRYPOINT /etc/init.d/dbus start && yarn start
+
+ENTRYPOINT cd /screenshot-api-server && yarn start
