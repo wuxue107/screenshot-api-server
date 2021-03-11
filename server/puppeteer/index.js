@@ -342,7 +342,7 @@ const loadPage = async function(options,doFunc){
     if(!/^https?:\/\/.*/.test(pageUrl)){
         throw "invalid pageUrl param";
     }
-    if(timeout === 0){
+    if(timeout <= 0){
         timeout = 30000;
     }
     if(timeout < 2000) timeout = 2000;
