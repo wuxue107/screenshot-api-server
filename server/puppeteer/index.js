@@ -346,7 +346,7 @@ const loadPage = async function(options,doFunc){
         timeout = 30000;
     }
     if(timeout < 2000) timeout = 2000;
-    if(timeout > 60000) timeout = 60000;
+    if(timeout > 90000) timeout = 90000;
     if(delay > timeout) delay = timeout - 1000;
     if(delay < 0) delay = 0;
     
