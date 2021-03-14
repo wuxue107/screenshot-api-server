@@ -18,7 +18,7 @@ app.all('*', (req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "*");
     res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
-    res.header("screenshot-api-server",'1.0.0')
+    res.header("Server",'API')
     next();
 });
 app.use('/api', apiRoute);
