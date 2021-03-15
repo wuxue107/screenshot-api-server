@@ -32,7 +32,7 @@ const renderPdf = function(req, res, next) {
     }).catch(function(e){
         let errorMsg = e.toString();
         if(/ERR_CONNECTION_REFUSED/.test(errorMsg)){
-            errorMsg = "PDF服务器无法访问页面的URL"
+            errorMsg = "PDF生成服务器无法访问页面的URL"
         }
         res.send(helper.failMsg("fail:" + errorMsg));
     });
