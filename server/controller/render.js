@@ -92,7 +92,7 @@ const renderImages = function(req, res, next){
 
 const downloadPdf = function(req, res, next) {
     let fileName = req.query.fileName || 'output.pdf';
-    let file = req.params[0];
+    let file = req.params[0].replace(/\.\./g,"");
     let pdfPath = helper.getPdfPath();
     if(require('fs').exists(helper.getPdfPath(file),function (isExist) {
         if(isExist){
