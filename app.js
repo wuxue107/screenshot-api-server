@@ -19,10 +19,10 @@ app.all('*', (req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "*");
     res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
-    res.header("Server",'API')
+    res.header("Server",'API');
     next();
 });
 app.use('/api', apiRoute);
-app.use('/download',downloadRoute)
+app.use('/download',downloadRoute);
 
 module.exports = app;
