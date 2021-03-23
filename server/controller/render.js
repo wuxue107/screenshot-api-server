@@ -93,7 +93,7 @@ const renderImages = function(req, res, next){
 const downloadPdf = function(req, res, next) {
     let fileName = req.query.fileName || 'output.pdf';
     let file = req.params[0].replace(/\.\./g,"");
-    if(/[^\w \-\/]/.test(file)){
+    if(/[^\w \-\/\.]/.test(file)){
         res.sendStatus(400);
         return;
     }
