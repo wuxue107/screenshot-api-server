@@ -13,6 +13,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 //app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/static',express.static(path.join(__dirname,'static')));
 
 app.all('*', (req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
@@ -23,6 +24,5 @@ app.all('*', (req, res, next) => {
 });
 app.use('/api', apiRoute);
 app.use('/download',downloadRoute)
-
 
 module.exports = app;
