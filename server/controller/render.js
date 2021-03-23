@@ -94,7 +94,7 @@ const downloadPdf = function(req, res, next) {
     let fileName = req.query.fileName || 'output.pdf';
     let file = req.params[0].replace(/\.\./g,"");
     if(/[^\w \-\/]/.test(file)){
-        res.sendStatus(400).send('Not Found');
+        res.sendStatus(400);
         return;
     }
     let pdfPath = helper.getPdfPath();
@@ -118,10 +118,10 @@ const downloadPdf = function(req, res, next) {
                     root : pdfPath
                 })
             }catch (e) {
-                res.sendStatus(500).send('Server Error');
+                res.sendStatus(500);
             }
         }else{
-            res.sendStatus(404).send('Not Found');
+            res.sendStatus(404);
         }
     }));
 };
