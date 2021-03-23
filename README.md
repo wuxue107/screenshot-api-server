@@ -1,5 +1,5 @@
 # 网页截图 和 生成PDF Api服务 
-
+    使用node express和puppeteer搭建的WEB截图服务
 ## 使用docker方式
 - docker仓库为：wuxue107/screenshot-api-server
 - 容器内目录web根目录 /screenshot-api-server/public 为可挂载目录，里面可以放一些静态文件
