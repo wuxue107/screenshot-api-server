@@ -106,3 +106,47 @@ yarn && yarn start
   }
 }
 ```
+
+## 生成由 bookjs-eazy 制作的PDF页面
+- API: http://localhost:3000/api/book
+- 请求参数：PSOT JSON，请设置一个较长的超时时间
+```javascript
+{
+    // 要截图的网页
+    "pageUrl": "https://bookjs.zhouwuxue.com/eazy-2.html",
+    // 超时时间，可选，默认：30000
+    "timeout": 30000,
+    // 页面完成后（checkPageCompleteJs返回为true后）延迟的时间，可选，默认：0
+    "delay": 100
+}
+```
+- 响应，生成的pdf文件存放在web可挂载的web目录下,路径/pdf/xxxx.pdf
+```javascript
+{
+  "code": 0,
+  "msg": "success",
+  "data": {
+    // 拼接上接口的前缀 http://localhost:3000/ 就是完整PDF地址 
+    // http://localhost:3000/pdf/1614458263411-glduu.pdf
+    // 拼接上接口的前缀 http://localhost:3000/download/可以就可生成在浏览器上的下载链接
+    // http://localhost:3000/download/pdf/1614458263411-glduu.pdf
+    "file": "/pdf/1614458263411-glduu.pdf"
+  }
+}
+```
+
+# 内置静态资源
+
+- http://localhost:3000/static/ 下内置了bookjs-eazy的一些依赖静态资源
+
+```
+static/js
+    - bookjs/1.5.0/bookjs-eazy.min.js
+    - pdfjs/
+        web/viewer.html?file=/pdf/2021-03-24/xxxx.pdf 
+    - jquery.min.js
+    - lodash.min.js
+    - polyfill.min.js
+
+```
+    
