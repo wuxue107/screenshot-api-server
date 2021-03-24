@@ -115,6 +115,8 @@ yarn && yarn start
     // http://localhost:3000/pdf/1614458263411-glduu.pdf
     // 拼接上接口的前缀 http://localhost:3000/download/可以就可生成在浏览器上的下载链接
     // http://localhost:3000/download/pdf/1614458263411-glduu.pdf
+    // 拼接上http://localhost:3000/static/js/pdfjs/web/viewer.html?file=/pdf/1614458263411-glduu.pdf
+    // 可使用pdfjs库进行预览
     "file": "/pdf/1614458263411-glduu.pdf"
   }
 }
@@ -147,6 +149,8 @@ yarn && yarn start
     // http://localhost:3000/pdf/1614458263411-glduu.pdf
     // 拼接上接口的前缀 http://localhost:3000/download/可以就可生成在浏览器上的下载链接
     // http://localhost:3000/download/pdf/1614458263411-glduu.pdf
+    // 拼接上http://localhost:3000/static/js/pdfjs/web/viewer.html?file=/pdf/1614458263411-glduu.pdf
+    // 可使用pdfjs库进行预览
     "file": "/pdf/1614458263411-glduu.pdf"
   }
 }
