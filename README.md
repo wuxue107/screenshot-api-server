@@ -94,11 +94,11 @@ yarn && yarn start
 ```javascript
 {
     // 要截图的网页
-    "pageUrl": "https://bookjs.zhouwuxue.com/eazy-2.html",
+    "pageUrl": "https://gitee.com/wuxue107",
     // 超时时间，可选，默认：30000
     "timeout": 30000,
     // 检查页面是否渲染完成的js表达式，可选，默认: "true"
-    "checkPageCompleteJs": "window.status === 'PDFComplete'",
+    "checkPageCompleteJs": "true",
     // 页面完成后（checkPageCompleteJs返回为true后）延迟的时间，可选，默认：0
     "delay": 100
 }
