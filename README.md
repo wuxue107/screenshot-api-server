@@ -172,6 +172,25 @@ static/js
     - polyfill.min.js
 
 ```
-    
+
 # 字体安装使用
+- 为了加快截图或生成PDF速度,通常字体文件较大，下载耗时。防止渲染截图或PDF出现字体不一致情况，建议预先安装常用字体
+- 如果是自己设计的页面，建议css设置字体时，优先使用字体原字体名，再使用网络字体别名，例如：
+
+```html
+<style>
+    @font-face {
+        font-family: YH;
+        src: url(./fonts/msyh.ttf);
+        font-weight: 400;
+        font-style: normal
+    }
+
+    body {
+        font-family: "Microsoft YaHei", YH, sans-serif;
+        font-weight: normal;
+    }
+</style>
+```
+
 - 放入web根目录./fonts下的所有字体文件，会在docker启动时自动加载。
