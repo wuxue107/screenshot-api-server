@@ -34,5 +34,3 @@ ENV NODE_ENV production
 VOLUME /screenshot-api-server/public
 
 ENTRYPOINT chmod 777 /screenshot-api-server/run.sh && /screenshot-api-server/run.sh
-
-
