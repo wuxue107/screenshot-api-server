@@ -162,7 +162,9 @@ yarn && yarn start
 
 ```
 static/js
-    - bookjs/1.5.0/bookjs-eazy.min.js
+    - bookjs/
+        latest/
+            bookjs-eazy.min.js
     - pdfjs/
         web/viewer.html?file=/pdf/2021-03-24/xxxx.pdf 
     - jquery.min.js
