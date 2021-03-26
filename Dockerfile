@@ -19,10 +19,10 @@ RUN \
       libxmu6 libxmuu1 libxshmfence1 libxtst6 libxv1 libxxf86dga1 libxxf86vm1 x11-utils xdg-utils xkb-data \
     && npm config set registry https://registry.npm.taobao.org -g \
     && npm config set sass_binary_site http://cdn.npm.taobao.org/dist/node-sass -g \
-    && tar -xvf latest.tar && cd /screenshot-api-server && mkdir public && yarn install \
+    && tar -xvf latest.tar && rm -rf latest.tar && cd /screenshot-api-server && mkdir public && yarn install \
     && yarn cache clean --force \
-    && apt-get clean all \
-    && rm -rf latest.tar && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /etc/rc.*/*dbus
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /etc/rc.*/*dbus \
+    && apt-get clean all
 
 
 EXPOSE 3000
@@ -33,4 +33,6 @@ ENV NODE_ENV production
 
 VOLUME /screenshot-api-server/public
 
-ENTRYPOINT cd /screenshot-api-server && yarn start
+ENTRYPOINT chmod 777 /screenshot-api-server/run.sh && /screenshot-api-server/run.sh
+
+
