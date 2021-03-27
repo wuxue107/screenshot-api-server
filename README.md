@@ -1,7 +1,7 @@
 # 网页截图 和 生成PDF Api服务 
     使用node express和puppeteer搭建的WEB截图服务
 ## 使用docker方式
-- docker仓库为：wuxue107/screenshot-api-server
+- docker仓库为：<a href="https://gitee.com/wuxue107/screenshot-api-server" target="_blank">wuxue107/screenshot-api-server</a>
 - 容器内目录web根目录 /screenshot-api-server/public 为可挂载目录，里面可以放一些静态文件
 - 使用运行下面命令，会将当前目录作为，web根目录运行web服务，
 
@@ -158,7 +158,7 @@ yarn && yarn start
 
 # 内置静态资源
 
-- http://localhost:3000/static/ 下内置了bookjs-eazy的一些依赖静态资源
+- http://localhost:3000/static/ 下内置了 <a href="https://gitee.com/wuxue107/bookjs-eazy" target="_blank">bookjs-eazy</a>的一些依赖静态资源
 
 ```
 static/js
