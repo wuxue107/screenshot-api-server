@@ -40,7 +40,7 @@ const renderPdf = function(req, res, next) {
 
 const renderBook = function(req, res, next){
     req.body.checkPageCompleteJs = "window.status === 'PDFComplete'";
-    req.body.timeout = req.body.timeout || 60000;
+    req.body.timeout = req.body.timeout || 90000;
     return renderPdf(req,res,next);
 };
 
