@@ -2,6 +2,46 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 const helper = require('../helper');
+const genericPool = require("generic-pool");
+const os = require('os');
+
+const createPuppeteerPool = function (opts) {
+    let puppeteerFactory = {
+        create: function() {
+            return puppeteer.launch({
+                headless: true,
+                dumpio: false,
+                defaultViewport: {
+                    width: 1280,
+                    height: 960
+                },
+                args: [
+                    '--headless',
+                    '--no-sandbox',
+                    '--disable-setuid-sandbox',
+                    '--disable-gpu',
+                    '--unlimited-storage',
+                    '--disable-dev-shm-usage',
+                    '--full-memory-crash-report',
+                    '--disable-extensions',
+                    '--mute-audio',
+                    '–no-first-run',
+                    '--start-maximized'
+                ]
+            });
+        },
+        destroy: function(browser) {
+            try{
+                browser.close();
+                browser = null;
+            }catch (e) {
+                console.log("close browser fail:" + e.toString())
+            }
+        }
+    };
+
+    return  genericPool.createPool(puppeteerFactory, opts);
+};
 
 const sleep = async function(timeout){
     return new Promise(function(resolve){
@@ -234,44 +274,6 @@ const closeBrowser = function () {
 };
 
 /**
- * 获取浏览器实例
- * @returns {Promise<Browser|*>}
- */
-const getBrowser = async function(){
-    if(browser) {
-        if(browser.isConnected()){
-            return browser;
-        }
-        
-        closeBrowser();
-    }
-    
-    browser =  await puppeteer.launch({
-        headless: true,
-        dumpio: false,
-        defaultViewport: {
-            width: 1280,
-            height: 960
-        },
-        args: [
-            '--headless',
-            '--no-sandbox',
-            '--disable-setuid-sandbox',
-            '--disable-gpu',
-            '--unlimited-storage',
-            '--disable-dev-shm-usage',
-            '--full-memory-crash-report',
-            '--disable-extensions',
-            '--mute-audio',
-            '–no-first-run',
-            '--start-maximized'
-        ]
-    });
-
-    return browser;
-};
-
-/**
  * 获取新页面实例
  * 
  * @param doFunc
@@ -282,7 +284,7 @@ const getPage = async function(doFunc,timeout){
     timeout = timeout || 30000;
     return new Promise(function(resolve,reject){
         (async function(){
-            let page,closeCurrentPage;
+            let browser,page,closeCurrentPage;
             let timeoutId = setTimeout(function () {
                 if(closeCurrentPage){
                     closeCurrentPage();
@@ -293,14 +295,19 @@ const getPage = async function(doFunc,timeout){
             closeCurrentPage = function () {
                 clearTimeout(timeoutId);
                 if(page){
-                    console.info("close page:" + page.url())
+                    console.info("close page:" + page.url());
                     page.close();
                     page = null;
                 }
+                
+                if(browser){
+                    browserPool.release(browser);
+                    browser = null;
+                }
             };
-
+            
             try{
-                browser = await getBrowser();
+                browser = await browserPool.acquire();
                 page = await browser.newPage();
                 await doFunc(page);
                 closeCurrentPage();
@@ -346,7 +353,7 @@ const loadPage = async function(options,doFunc){
         timeout = 30000;
     }
     if(timeout < 2000) timeout = 2000;
-    if(timeout > 12000) timeout = 12000;
+    if(timeout > 120000) timeout = 120000;
     if(delay > timeout - 1000) delay = timeout - 1000;
     if(delay < 0) delay = 0;
     
@@ -378,20 +385,35 @@ const loadPage = async function(options,doFunc){
     },timeout);
 };
 
+
 /**
  * 初始化浏览器
- * 
- * @returns {Promise<void>}
  */
-const initBrowser = async function(){
-    await getBrowser();
+const initBrowserPool = function(maxProcess){
     let pdfPath = helper.getPdfPath();
     if(!fs.existsSync(pdfPath)){
         fs.mkdirSync(pdfPath);
     }
+
+    if(maxProcess === undefined){
+        maxProcess = ~~process.env.MAX_BROWSER;
+        if(maxProcess <= 0){
+            maxProcess = ~~((os.totalmem() / (1024 * 1024) - 256 ) / 128);
+        }
+        
+        if(maxProcess < 1) maxProcess = 1;
+    }
+
+    console.log("MAX_BROWSER:" + maxProcess);
+    return createPuppeteerPool({
+        max: maxProcess,
+        min: 1, // minimum size of the pool
+        idleTimeoutMillis : 60000,
+        maxWaitingClients : 3 * maxProcess,
+    });
 };
 
-initBrowser();
+const browserPool = initBrowserPool();
 
 module.exports = {
     loadPage,
