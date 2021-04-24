@@ -385,7 +385,7 @@ const initBrowserPool = function(maxProcess){
         helper.info("FREE MEM:" + freeMem + 'm');
         maxProcess = ~~process.env.MAX_BROWSER;
         if(maxProcess <= 0){
-            maxProcess = ~~(freeMem / 150);
+            maxProcess = ~~(freeMem / 200);
         }
         
         if(maxProcess < 1) maxProcess = 1;
