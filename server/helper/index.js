@@ -44,6 +44,16 @@ let helper = {
 
         return __dirname + '/../../public/pdf' + path;
     },
+    
+    log : function (msg) {
+        console.log('[' + new Date() + '] ' + msg)
+    },
+    info : function (msg) {
+        console.info('[' + new Date() + '] ' + msg)
+    },
+    error : function (msg) {
+        console.error('[' + new Date() + '] ' + msg)
+    },
 };
 
 module.exports = helper;

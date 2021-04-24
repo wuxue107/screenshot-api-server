@@ -8,6 +8,7 @@ const os = require('os');
 const createPuppeteerPool = function (opts) {
     let puppeteerFactory = {
         create: function() {
+            //helper.info("start puppeteer instance")
             return puppeteer.launch({
                 headless: true,
                 dumpio: false,
@@ -32,15 +33,15 @@ const createPuppeteerPool = function (opts) {
         },
         destroy: function(browser) {
             try{
-                browser.close();
-                browser = null;
+                // helper.info("close puppeteer instance")
+                browser.closeSync();
             }catch (e) {
-                console.log("close browser fail:" + e.toString())
+                // helper.error("close browser fail:" + e.toString())
             }
         }
     };
 
-    return  genericPool.createPool(puppeteerFactory, opts);
+    return genericPool.createPool(puppeteerFactory, opts);
 };
 
 const sleep = async function(timeout){
@@ -65,8 +66,8 @@ const waitPageComplete = async function(page,timeout,checkPageCompleteJs){
     if(timeout < 1000){
         timeout = 1000;
     }
-    if(timeout > 60000){
-        timeout = 60000;
+    if(timeout > 120000){
+        timeout = 120000;
     }
     checkPageCompleteJs = ((checkPageCompleteJs || '') + '') || 'window.document.readyState === "complete"';
 
@@ -82,7 +83,7 @@ const waitPageComplete = async function(page,timeout,checkPageCompleteJs){
                 
                 time += tickDelay;
                 loadComplete = await page.evaluate((checkPageCompleteJs)).catch(function(e){
-                    console.error("waitPageComplete error:" + e.toString())
+                    helper.error("waitPageComplete error:" + e.toString())
                 });
 
                 if(loadComplete){
@@ -251,26 +252,10 @@ const renderPdf = async function(page,saveFile){
 
     if(saveFile){
         option.path = saveFile;
-        console.log("save pdf file:" + saveFile);
+        helper.log("save pdf file:" + saveFile);
     }
     
     return await page.pdf(option);
-};
-
-let browser;
-
-/**
- * 关闭浏览器
- */
-const closeBrowser = function () {
-    if(browser){
-        try{
-            browser.close();
-            browser = null;
-        }catch (e) {
-            console.log("close browser fail:" + e.toString())
-        }
-    }
 };
 
 /**
@@ -295,7 +280,7 @@ const getPage = async function(doFunc,timeout){
             closeCurrentPage = function () {
                 clearTimeout(timeoutId);
                 if(page){
-                    console.info("close page:" + page.url());
+                    helper.log("close page:" + page.url());
                     page.close();
                     page = null;
                 }
@@ -368,23 +353,22 @@ const loadPage = async function(options,doFunc){
     }
     
     return getPage(async function(page){
-        console.log("open url:" + pageUrl);
+        helper.log("open url:" + pageUrl);
         if(width > 0 && height > 0){
-            console.log("set viewport: width:" + width + ',height:' + height);
+            helper.log("set viewport: width:" + width + ',height:' + height);
             page.setViewport({width:width,height:height});
         }
         page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.190 Safari/537.36');
         await page.goto(pageUrl);
 
-        console.log("wait page load complete ...");
+        helper.log("wait page load complete ...");
         await waitPageComplete(page,timeout,checkPageCompleteJs);
-        console.log("print delay:" + delay);
+        helper.log("print delay:" + delay);
         await sleep(delay);
-        console.log("do user action");
+        helper.log("do user action");
         await doFunc(page);
     },timeout);
 };
-
 
 /**
  * 初始化浏览器
@@ -401,14 +385,16 @@ const initBrowserPool = function(maxProcess){
             maxProcess = ~~((os.totalmem() / (1024 * 1024) - 256 ) / 128);
         }
         
-        if(maxProcess < 1) maxProcess = 1;
+        if(maxProcess < 2) maxProcess = 2;
     }
 
-    console.log("MAX_BROWSER:" + maxProcess);
+    helper.info("MAX_BROWSER:" + maxProcess);
     return createPuppeteerPool({
         max: maxProcess,
-        min: 1, // minimum size of the pool
-        idleTimeoutMillis : 60000,
+        min: 2, // minimum size of the pool
+        idleTimeoutMillis : 5 *60000,
+        softIdleTimeoutMillis : 5 * 60000,
+        evictionRunIntervalMillis : 1000,
         maxWaitingClients : 3 * maxProcess,
     });
 };
