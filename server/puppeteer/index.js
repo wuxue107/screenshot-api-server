@@ -8,7 +8,7 @@ const os = require('os');
 const createPuppeteerPool = function (opts) {
     let puppeteerFactory = {
         create: function() {
-            //helper.info("start puppeteer instance")
+            helper.info("start puppeteer instance")
             return puppeteer.launch({
                 headless: true,
                 dumpio: false,
@@ -26,6 +26,7 @@ const createPuppeteerPool = function (opts) {
                     '--full-memory-crash-report',
                     '--disable-extensions',
                     '--mute-audio',
+                    '–no-zygote',
                     '–no-first-run',
                     '--start-maximized'
                 ]
@@ -33,10 +34,10 @@ const createPuppeteerPool = function (opts) {
         },
         destroy: function(browser) {
             try{
-                // helper.info("close puppeteer instance")
-                browser.closeSync();
+                helper.info("close puppeteer instance")
+                browser.close();
             }catch (e) {
-                // helper.error("close browser fail:" + e.toString())
+                helper.error("close browser fail:" + e.toString())
             }
         }
     };
@@ -394,8 +395,8 @@ const initBrowserPool = function(maxProcess){
     return createPuppeteerPool({
         max: maxProcess,
         min: 1, // minimum size of the pool
-        idleTimeoutMillis : 5 *60000,
-        softIdleTimeoutMillis : 5 * 60000,
+        idleTimeoutMillis : 60000,
+        softIdleTimeoutMillis : 60000,
         evictionRunIntervalMillis : 1000,
         maxWaitingClients : 3 * maxProcess,
     });
