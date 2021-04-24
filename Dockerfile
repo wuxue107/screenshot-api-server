@@ -6,7 +6,7 @@ COPY latest.tar /
 
 RUN \
     sed -i 's/deb.debian.org/mirrors.cloud.tencent.com/g;s/security.debian.org/mirrors.cloud.tencent.com/g;s/security.debian.org/mirrors.cloud.tencent.com/g' /etc/apt/sources.list \
-    && apt-get clean all && apt-get updata && apt-get update \
+    && apt-get clean all && apt-get update \
     && apt-get install --no-install-recommends -y \
       xfonts-intl-chinese ttf-wqy-microhei  xfonts-wqy fonts-arphic-ukai fonts-cwtex-fs fonts-symbola xfonts-intl-european xfonts-intl-japanese \
       libnspr4 libnss3 libexpat1 libfontconfig1 libuuid1 \
