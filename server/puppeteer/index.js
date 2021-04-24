@@ -8,7 +8,7 @@ const os = require('os');
 const createPuppeteerPool = function (opts) {
     let puppeteerFactory = {
         create: function() {
-            helper.info("start puppeteer instance")
+            //helper.info("start puppeteer instance")
             return puppeteer.launch({
                 headless: true,
                 dumpio: false,
@@ -34,7 +34,7 @@ const createPuppeteerPool = function (opts) {
         },
         destroy: function(browser) {
             try{
-                helper.info("close puppeteer instance")
+                //helper.info("close puppeteer instance")
                 browser.close();
             }catch (e) {
                 helper.error("close browser fail:" + e.toString())
