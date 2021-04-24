@@ -382,10 +382,10 @@ const initBrowserPool = function(maxProcess){
     if(maxProcess === undefined){
         maxProcess = ~~process.env.MAX_BROWSER;
         if(maxProcess <= 0){
-            maxProcess = ~~((os.totalmem() / (1024 * 1024) - 256 ) / 128);
+            maxProcess = ~~((os.freemem() / (1024 * 1024) ) / 128);
         }
         
-        if(maxProcess < 2) maxProcess = 2;
+        if(maxProcess < 1) maxProcess = 1;
     }
 
     helper.info("MAX_BROWSER:" + maxProcess);
