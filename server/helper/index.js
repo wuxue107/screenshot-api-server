@@ -1,4 +1,4 @@
-
+const moment = require('moment');
 let helper = {
     apiMsg : function(code ,msg , data){
         if (code === undefined) code = 0;
@@ -46,13 +46,13 @@ let helper = {
     },
     
     log : function (msg) {
-        console.log('[' + new Date() + '] ' + msg)
+        console.log('[' + moment().format() + '] ' + msg)
     },
     info : function (msg) {
-        console.info('[' + new Date() + '] ' + msg)
+        console.info('[' +  moment().format() + '] ' + msg)
     },
     error : function (msg) {
-        console.error('[' + new Date() + '] ' + msg)
+        console.error('[' +  moment().format() + '] ' + msg)
     },
 };
 
