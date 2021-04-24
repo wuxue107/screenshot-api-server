@@ -8,7 +8,7 @@
 ```bash
 docker pull wuxue107/screenshot-api-server
 
-## -e MAX_BROWSER=[num] 环境变量可选，最大的浏览器实例数，忽略选项则默认值： [可用内存]/200M
+## -e MAX_BROWSER=[num] 环境变量可选，最大的puppeteer实例数，忽略选项则默认值： [可用内存]/200M
 docker run -p 3000:3000 -td --rm -e "MAX_BROWSER=1" -v ${PWD}:/screenshot-api-server/public --name=screenshot-api-server wuxue107/screenshot-api-server
 ```
 
