@@ -6,6 +6,10 @@ const moment = require('moment');
 const urlencode = require('urlencode');
 
 const renderPdf = function(req, res, next) {
+    res.setTimeout(120*1000,function(){
+        res.send(helper.failMsg("timeout"))
+    });
+    
     let postParam = req.body;
     // 渲染超时时间
     let pdfFileName = stringRandom(20, { numbers: false }) + '.pdf';
