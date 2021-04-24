@@ -391,7 +391,7 @@ const initBrowserPool = function(maxProcess){
     helper.info("MAX_BROWSER:" + maxProcess);
     return createPuppeteerPool({
         max: maxProcess,
-        min: 2, // minimum size of the pool
+        min: 1, // minimum size of the pool
         idleTimeoutMillis : 5 *60000,
         softIdleTimeoutMillis : 5 * 60000,
         evictionRunIntervalMillis : 1000,
