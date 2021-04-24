@@ -160,7 +160,7 @@ const screenshotDOMElements = async function(page, selectors,encoding,type) {
     type = type === 'jpeg'?'jpeg':'png';
     encoding = encoding === 'binary'?'binary':'base64';
 
-    if(Array.isArray(selectors)){
+    if(!Array.isArray(selectors)){
         throw "invalid screenshot selectors";
     }
     
