@@ -8,7 +8,7 @@ RUN \
     sed -i 's/deb.debian.org/mirrors.cloud.tencent.com/g;s/security.debian.org/mirrors.cloud.tencent.com/g;s/security.debian.org/mirrors.cloud.tencent.com/g' /etc/apt/sources.list \
     && apt-get clean all && apt-get update \
     && apt-get install --no-install-recommends -y \
-      xfonts-intl-chinese ttf-wqy-microhei  xfonts-wqy fonts-arphic-ukai fonts-cwtex-fs fonts-symbola xfonts-intl-european xfonts-intl-japanese \
+      wget xfonts-intl-chinese ttf-wqy-microhei  xfonts-wqy fonts-arphic-ukai fonts-cwtex-fs fonts-symbola xfonts-intl-european xfonts-intl-japanese \
       libnspr4 libnss3 libexpat1 libfontconfig1 libuuid1 \
       xz-utils dbus libg2-dev libnspr4 libnss3 libexpat1 libfontconfig1 libuuid1 adwaita-icon-theme at-spi2-core dconf-gsettings-backend dconf-service fonts-liberation glib-networking glib-networking-common glib-networking-services gsettings-desktop-schemas libasound2 libasound2-data libatk-bridge2.0-0 libatspi2.0-0 \
       libcolord2 libdconf1 libdrm-amdgpu1 libdrm-intel1 libdrm-nouveau2 libdrm-radeon1 libdrm2 libegl1-mesa libepoxy0  libgbm1 \
@@ -19,7 +19,7 @@ RUN \
       libxmu6 libxmuu1 libxshmfence1 libxtst6 libxv1 libxxf86dga1 libxxf86vm1 x11-utils xdg-utils xkb-data \
     && npm config set registry https://registry.npm.taobao.org -g \
     && npm config set sass_binary_site http://cdn.npm.taobao.org/dist/node-sass -g \
-    && tar -xvf latest.tar && rm -rf latest.tar && cd /screenshot-api-server && mkdir public && yarn install \
+    && tar -xvf latest.tar && rm -rf latest.tar && cd /screenshot-api-server && rm -rf public && mkdir -p public/pdf public/fonts && yarn install \
     && yarn cache clean --force \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /etc/rc.*/*dbus \
     && apt-get clean all
