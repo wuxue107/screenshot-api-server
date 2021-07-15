@@ -19,7 +19,7 @@ RUN \
       libxmu6 libxmuu1 libxshmfence1 libxtst6 libxv1 libxxf86dga1 libxxf86vm1 x11-utils xdg-utils xkb-data \
     && npm config set registry https://registry.npm.taobao.org -g \
     && npm config set sass_binary_site http://cdn.npm.taobao.org/dist/node-sass -g \
-    && tar -xvf latest.tar && rm -rf latest.tar && cd /screenshot-api-server && rm -rf public && mkdir -p public/pdf public/fonts && yarn install \
+    && tar -xvf latest.tar && rm -rf latest.tar && cd /screenshot-api-server && mkdir -p public && yarn install \
     && yarn cache clean --force \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /etc/rc.*/*dbus \
     && apt-get clean all
