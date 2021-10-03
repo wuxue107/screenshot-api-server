@@ -124,18 +124,64 @@ yarn && yarn start
 }
 ```
 
-## 生成由 <a href="https://gitee.com/wuxue107/bookjs-eazy" target="_blank">wuxue107/bookjs-eazy</a> 制作的PDF页面
+
+# bookjs-easy PDF生成 
+
+- 生成由 <a href="https://gitee.com/wuxue107/bookjs-eazy" target="_blank">wuxue107/bookjs-eazy</a> 制作的PDF页面
+
+## 根据bookjs-eazy 网页生成PDF
 
 - API: http://localhost:3000/api/book
 - 请求参数：PSOT JSON，请设置一个较长的超时时间
 
 ```javascript
 {
-    // 要截图的网页
+    // 由bookjs-eazy制作的网页
     "pageUrl": "https://bookjs.zhouwuxue.com/eazy-2.html",
     // 超时时间，可选，默认：30000
     "timeout": 30000,
     // 页面完成后（checkPageCompleteJs返回为true后）延迟的时间，可选，默认：0
+    "delay": 100
+}
+```
+
+- 响应，生成的pdf文件存放在web可挂载的web目录下,路径/pdf/xxxx.pdf
+
+```javascript
+{
+  "code": 0,
+  "msg": "success",
+  "data": {
+    // 拼接上接口的前缀 http://localhost:3000/ 就是完整PDF地址 
+    // http://localhost:3000/pdf/1614458263411-glduu.pdf
+    // 拼接上接口的前缀 http://localhost:3000/download/可以就可生成在浏览器上的下载链接
+    // http://localhost:3000/download/pdf/1614458263411-glduu.pdf
+    // 拼接上http://localhost:3000/static/js/pdfjs/web/viewer.html?file=/pdf/1614458263411-glduu.pdf
+    // 可使用pdfjs库进行预览
+    "file": "/pdf/1614458263411-glduu.pdf"
+  }
+}
+```
+
+## 根据 bookjs-eazy 模板片段生成PDF 
+
+- API: http://localhost:3000/api/book-tpl
+- 请求参数：PSOT JSON，请设置一个较长的超时时间
+
+```javascript
+{
+    // PDF 配置：参考 <a href="https://gitee.com/wuxue107/bookjs-eazy#%E9%85%8D%E7%BD%AE%E9%A1%B5%E9%9D%A2%E5%8F%82%E6%95%B0" target="_blank">wuxue107/bookjs-eazy 配置页面参数</a> 
+    "bookConfig": {
+         "pageSize": "ISO_A4",
+         "orientation": "portrait",
+         "padding": "20mm 10mm 20mm 10mm"
+    },
+    // 额外的css样式
+    "bookStyle" : `a{color:red;}`,
+    // 模板内容：参考 <a href="https://gitee.com/wuxue107/bookjs-eazy#pdf%E5%86%85%E5%AE%B9%E8%AE%BE%E8%AE%A1" target="_blank">wuxue107/bookjs-eazy 内容设计. #contentBox内部的HTML</a> 
+    "bookTpl" : `<div data-op-type="new-page"></div><div data-op-type="pendants"><div class='pendant-title'>第一章：Echart图表</div></div><h1  data-op-type='block'>第1章 Echart图表</h1>`,
+    // 超时时间，可选，默认：30000
+    "timeout": 30000,
     "delay": 100
 }
 ```

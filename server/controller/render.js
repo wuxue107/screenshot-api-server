@@ -131,10 +131,68 @@ const downloadPdf = function(req, res, next) {
     }));
 };
 
+const renderBookTpl = function(req, res, next){
+    if(!_.isObject(req.body.bookConfig)){
+        req.body.bookConfig = {};
+    }
+    let bookStyle = req.body.bookStyle  ? ("<style>" . req.body.bookStyle + "</style>") : "";
+    let bookTpl = req.body.bookTpl || '<div>内容为空</div>';
+    let contentBox = '<div>' + bookStyle + bookTpl + '</div>';
+    let baseUrl = 'http://127.0.0.1:' + (process.env.PORT || '3000') + '/';
+    let bookConfig = _.extend({
+        pageSize : 'ISO_A4',
+        orientation : 'portrait',// landscape
+        padding : "20mm 10mm 20mm 10mm",
+        toolBar : false
+    },req.body.bookConfig || {});
+    bookConfig.start = true;
+    bookConfig.contentBox = contentBox;
+    
+    let bookConfigStr = JSON.stringify(bookConfig);
+    let htmlContent = `<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+    <meta charset="UTF-8">
+    <title>TPL-</title>
+    <base href="${baseUrl}" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+    <meta name="renderer" content="webkit">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=0">
+    <script src="/static/js/polyfill.min.js"></script>
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/lodash.min.js"></script>
+    <script src="/static/js/bookjs/latest/bookjs-eazy.min.js"></script>
+</head>
+<body>
+<script>
+    bookConfig = ${bookConfigStr};
+</script>
+</body>
+</html>
+`;
+    
+    let pageUrl = 'data:text/html;base64,' + Buffer.from(htmlContent).toString('base64');
+    req.body.pageUrl = pageUrl;
+    
+    renderBook(req,res,next);
+};
+
+const renderBookPage = function(req, res, next){
+    let tpl_id = req.query.tpl_id;
+    let bookConfig = helper.cache.get(tpl_id) || {start : true,contentBox : '<h2>链接已失效</h2>'};
+    res.render('tpl-html.art', {
+        bookConfig: bookConfig,
+    });
+};
+
 module.exports = {
     renderPdf,
     renderImage,
     renderImages,
     renderBook,
     downloadPdf,
+    renderBookTpl,
+    renderBookPage,
+    
 };

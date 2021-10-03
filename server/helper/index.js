@@ -1,4 +1,7 @@
 const moment = require('moment');
+
+const NodeCache = require( "node-cache" );
+
 let helper = {
     apiMsg : function(code ,msg , data){
         if (code === undefined) code = 0;
@@ -55,5 +58,7 @@ let helper = {
         console.error('[' +  moment().format() + '] ' + msg)
     },
 };
+
+helper.cache = new NodeCache({ stdTTL: 100 });
 
 module.exports = helper;

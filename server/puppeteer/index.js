@@ -17,7 +17,7 @@ const createPuppeteerPool = function (opts) {
                     height: 960
                 },
                 args: [
-                    '--headless',
+                    // '--headless',
                     '--no-sandbox',
                     '--disable-setuid-sandbox',
                     '--disable-gpu',
@@ -332,7 +332,7 @@ const loadPage = async function(options,doFunc){
     // 打开页面的URL
     let pageUrl = (options.pageUrl || '') + '';
 
-    if(!/^https?:\/\/.*/.test(pageUrl)){
+    if(!/^(https?|data):/.test(pageUrl)){
         throw "invalid pageUrl param";
     }
     if(timeout <= 0){
@@ -354,12 +354,27 @@ const loadPage = async function(options,doFunc){
     }
     
     return getPage(async function(page){
+        if(pageUrl.substr(0,5) === 'data:'){
+            pageUrl = await page.evaluate(dataUrl => {
+                var arr = dataUrl.split(','),mime = arr[0].match(/:(.*?);/)[1],
+                    bstr = atob(arr[1]),n = bstr.length,u8arr =new Uint8Array(n);
+                while(n--) {
+                    u8arr[n] = bstr.charCodeAt(n);
+                }
+                return URL.createObjectURL(new Blob([u8arr],{type: mime}));
+            }, pageUrl);
+
+            helper.log("data url to blob url:" + pageUrl)
+        }
+        
         helper.log("open url:" + pageUrl);
         if(width > 0 && height > 0){
             helper.log("set viewport: width:" + width + ',height:' + height);
             page.setViewport({width:width,height:height});
         }
         page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.190 Safari/537.36');
+        
+        
         await page.goto(pageUrl);
 
         helper.log("wait page load complete ...");
@@ -381,16 +396,21 @@ const initBrowserPool = function(maxProcess){
     }
 
     if(maxProcess === undefined){
-        let freeMem = os.freemem() / (1024 * 1024);
-        helper.info("FREE MEM:" + freeMem + 'm');
-        maxProcess = ~~process.env.MAX_BROWSER;
-        if(maxProcess <= 0){
-            maxProcess = ~~(freeMem / 200);
+        if(process.env.MAX_BROWSER){
+            if(process.env.MAX_BROWSER === 'auto'){
+                let freeMem = os.freemem() / (1024 * 1024);
+                helper.info("FREE MEM:" + freeMem + 'm');
+                maxProcess = ~~(freeMem / 200);
+            }else{
+                maxProcess = ~~ process.env.MAX_BROWSER;
+            }
+        }else{
+            maxProcess = 1;
         }
-        
-        if(maxProcess < 1) maxProcess = 1;
     }
-
+    
+    if(maxProcess < 1) maxProcess = 1;
+    
     helper.info("MAX_BROWSER:" + maxProcess);
     return createPuppeteerPool({
         max: maxProcess,

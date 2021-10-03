@@ -8,4 +8,7 @@ router.post('/book', renderController.renderBook);
 router.post('/imgs', renderController.renderImages);
 router.post('/img', renderController.renderImage);
 
+router.get('/book-page', renderController.renderBookPage);
+router.post('/book-tpl', renderController.renderBookTpl);
+
 module.exports = router;
