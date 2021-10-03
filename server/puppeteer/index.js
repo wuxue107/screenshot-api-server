@@ -352,16 +352,16 @@ const loadPage = async function(options,doFunc){
     if(typeof doFunc !== 'function'){
         throw "invalid success callback param";
     }
-    
+
     return getPage(async function(page){
         if(pageUrl.substr(0,5) === 'data:'){
             pageUrl = await page.evaluate(dataUrl => {
-                var arr = dataUrl.split(','),mime = arr[0].match(/:(.*?);/)[1],
-                    bstr = atob(arr[1]),n = bstr.length,u8arr =new Uint8Array(n);
-                while(n--) {
-                    u8arr[n] = bstr.charCodeAt(n);
-                }
-                return URL.createObjectURL(new Blob([u8arr],{type: mime}));
+                let arr = dataUrl.split(',');
+                let mime = arr[0].match(/:(.*?);/)[1];
+                let bstr = atob(arr[1]);
+                return URL.createObjectURL(new Blob([bstr], {
+                    type: mime
+                }));
             }, pageUrl);
 
             helper.log("data url to blob url:" + pageUrl)
