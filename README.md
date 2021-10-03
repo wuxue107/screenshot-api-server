@@ -28,8 +28,10 @@ yarn && yarn start
 
 ```javascript
 {
-    // 要截图的网页
+    // 要截图的网页 (pageUrl 、html 参数二选一）
     "pageUrl":"https://gitee.com/wuxue107",
+    // 要截图的网页HTML (pageUrl 、html 参数二选一）
+    "html" : "",
     // 要截取的节点选择器,可选，默认body
     "element":"body",
     // 超时时间，可选，默认：30000
@@ -60,8 +62,10 @@ yarn && yarn start
 
 ```javascript
 {
-    // 要截图的网页
-    "pageUrl": "https://gitee.com/wuxue107",
+    // 要截图的网页 (pageUrl 、html 参数二选一）
+    "pageUrl":"https://gitee.com/wuxue107",
+    // 要截图的网页HTML (pageUrl 、html 参数二选一）
+    "html" : "",
     // 要截取的节点选择器,可选，默认body
     "elements": [".card"],
     // 超时时间，可选，默认：30000
@@ -95,8 +99,10 @@ yarn && yarn start
 
 ```javascript
 {
-    // 要截图的网页
-    "pageUrl": "https://gitee.com/wuxue107",
+    // 要制作为PDF的网页 (pageUrl 、html 参数二选一）
+    "pageUrl":"https://gitee.com/wuxue107",
+    // 要截图的网页HTML (pageUrl 、html 参数二选一）
+    "html" : "<div>bookjs-eazy</div>",
     // 超时时间，可选，默认：30000
     "timeout": 30000,
     // 检查页面是否渲染完成的js表达式，可选，默认: "true"

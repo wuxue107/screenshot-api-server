@@ -331,6 +331,11 @@ const loadPage = async function(options,doFunc){
     let checkPageCompleteJs = options.checkPageCompleteJs;
     // 打开页面的URL
     let pageUrl = (options.pageUrl || '') + '';
+    if(pageUrl === ''){
+        if(options.html){
+            pageUrl = helper.stringToDataUrl(options.html,'text/html');
+        }
+    }
 
     if(!/^(https?|data):/.test(pageUrl)){
         throw "invalid pageUrl param";

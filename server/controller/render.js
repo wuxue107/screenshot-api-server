@@ -24,6 +24,7 @@ const renderPdf = function(req, res, next) {
     
     browserHelper.loadPage({
         pageUrl : postParam.pageUrl,
+        html : postParam.html,
         timeout : ~~postParam.timeout,
         delay :  ~~postParam.delay,
         checkPageCompleteJs : postParam.checkPageCompleteJs,
@@ -54,6 +55,7 @@ const renderImage = function(req, res, next){
     let element = (postParam.element || 'body') + '';
     browserHelper.loadPage({
         pageUrl : postParam.pageUrl,
+        html : postParam.html,
         timeout : ~~postParam.timeout,
         delay : ~~postParam.delay,
         width : ~~postParam.width,
@@ -77,6 +79,7 @@ const renderImages = function(req, res, next){
     let elements = postParam.elements || [];
     browserHelper.loadPage({
         pageUrl : postParam.pageUrl,
+        html : postParam.html,
         timeout : ~~postParam.timeout,
         delay : ~~postParam.delay,
         width : ~~postParam.width,
@@ -172,8 +175,7 @@ const renderBookTpl = function(req, res, next){
 </html>
 `;
     
-    let pageUrl = 'data:text/html;base64,' + Buffer.from(htmlContent).toString('base64');
-    req.body.pageUrl = pageUrl;
+    req.body.html = htmlContent;
     
     renderBook(req,res,next);
 };

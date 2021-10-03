@@ -57,6 +57,11 @@ let helper = {
     error : function (msg) {
         console.error('[' +  moment().format() + '] ' + msg)
     },
+    
+    stringToDataUrl : function (text,type) {
+        type = type || 'text/html';
+        return 'data:' + type + ';base64,' + Buffer.from(text).toString('base64');
+    }
 };
 
 helper.cache = new NodeCache({ stdTTL: 100 });
