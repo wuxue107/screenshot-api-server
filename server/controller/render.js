@@ -6,7 +6,8 @@ const moment = require('moment');
 const urlencode = require('urlencode');
 
 const renderPdf = function(req, res, next) {
-    res.setTimeout(120*1000,function(){
+    req.body.timeout = req.body.timeout || 120000;
+    res.setTimeout(req.body.timeout,function(){
         res.send(helper.failMsg("timeout"))
     });
     
