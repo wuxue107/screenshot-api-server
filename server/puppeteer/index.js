@@ -332,14 +332,15 @@ const loadPage = async function(options,doFunc){
     // 打开页面的URL
     let pageUrl = (options.pageUrl || '') + '';
     if(pageUrl === ''){
-        if(options.html){
-            pageUrl = helper.stringToDataUrl(options.html,'text/html');
+        if(!options.html){
+            throw "pageUrl / html param can not both empty"
+        }
+    }else{
+        if(!/^(https?|data):/.test(pageUrl)){
+            throw "invalid pageUrl param";
         }
     }
 
-    if(!/^(https?|data):/.test(pageUrl)){
-        throw "invalid pageUrl param";
-    }
     if(timeout <= 0){
         timeout = 30000;
     }
@@ -359,17 +360,28 @@ const loadPage = async function(options,doFunc){
     }
 
     return getPage(async function(page){
-        if(pageUrl.substr(0,5) === 'data:'){
-            pageUrl = await page.evaluate(dataUrl => {
-                let arr = dataUrl.split(',');
-                let mime = arr[0].match(/:(.*?);/)[1];
-                let bstr = atob(arr[1]);
-                return URL.createObjectURL(new Blob([bstr], {
-                    type: mime
-                }));
-            }, pageUrl);
+        if(pageUrl === ''){
+                pageUrl = await page.evaluate(htmlContent => {
+                    return URL.createObjectURL(new Blob([htmlContent], {
+                        type: 'text/html'
+                    }));
+                }, options.html);
 
-            helper.log("data url to blob url:" + pageUrl)
+                helper.log("html text to blob url:" + pageUrl)
+        }else{
+            // dataURL 浏览器有URL长度限制
+            if(pageUrl.substr(0,5) === 'data:'){
+                pageUrl = await page.evaluate(dataUrl => {
+                    let arr = dataUrl.split(',');
+                    let mime = arr[0].match(/:(.*?);/)[1];
+                    let bstr = atob(arr[1]);
+                    return URL.createObjectURL(new Blob([bstr], {
+                        type: mime
+                    }));
+                }, pageUrl);
+
+                helper.log("data url to blob url:" + pageUrl)
+            }
         }
         
         helper.log("open url:" + pageUrl);
