@@ -17,7 +17,7 @@ const createPuppeteerPool = function (opts) {
                     height: 960
                 },
                 args: [
-                    // '--headless',
+                    '--headless',
                     '--no-sandbox',
                     '--disable-setuid-sandbox',
                     '--disable-gpu',
