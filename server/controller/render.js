@@ -171,7 +171,7 @@ const renderBookTpl = function(req, res, next){
     <script src="/static/js/bookjs/latest/bookjs-eazy.min.js"></script>
 </head>
 <body>
-<style id="book-style"></style>
+<style id="book-style" type="text/css" rel="stylesheet"></style>
 <script>
     document.getElementById('book-style').appendChild(document.createTextNode(${bookStyleJson}));
 </script>
