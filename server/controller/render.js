@@ -135,10 +135,12 @@ const downloadPdf = function(req, res, next) {
 };
 
 const renderBookTpl = function(req, res, next){
+    console.log(req.body);
     if(!_.isObject(req.body.bookConfig)){
         req.body.bookConfig = {};
     }
-    let bookStyle = req.body.bookStyle  ? ("<style>" . req.body.bookStyle + "</style>") : "";
+    console.log(req.body);
+    let bookStyle = req.body.bookStyle  ? ("<style>" + req.body.bookStyle + "</style>") : "";
     let bookTpl = req.body.bookTpl || '<div>内容为空</div>';
     let contentBox = '<div>' + bookStyle + bookTpl + '</div>';
     let baseUrl = 'http://127.0.0.1:' + (process.env.PORT || '3000') + '/';
