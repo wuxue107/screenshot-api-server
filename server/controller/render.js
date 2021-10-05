@@ -140,9 +140,10 @@ const renderBookTpl = function(req, res, next){
         req.body.bookConfig = {};
     }
     console.log(req.body);
-    let bookStyle = req.body.bookStyle  ? ("<style>" + req.body.bookStyle + "</style>") : "";
+    let bookStyleJson = JSON.stringify(req.body.bookStyle  ||  "");
+    
     let bookTpl = req.body.bookTpl || '<div>内容为空</div>';
-    let contentBox = '<div>' + bookStyle + bookTpl + '</div>';
+    let contentBox = '<div>' + bookTpl + '</div>';
     let baseUrl = 'http://127.0.0.1:' + (process.env.PORT || '3000') + '/';
     let bookConfig = _.extend({
         pageSize : 'ISO_A4',
@@ -170,6 +171,10 @@ const renderBookTpl = function(req, res, next){
     <script src="/static/js/bookjs/latest/bookjs-eazy.min.js"></script>
 </head>
 <body>
+<style id="book-style"></style>
+<script>
+    document.getElementById('book-style').appendChild(document.createTextNode(${bookStyleJson}));
+</script>
 <script>
     bookConfig = ${bookConfigStr};
 </script>
