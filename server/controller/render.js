@@ -134,14 +134,13 @@ const downloadPdf = function(req, res, next) {
     }));
 };
 
-const renderBookTpl = function(req, res, next){
-    console.log(req.body);
+const makeBookTplHtml = function (req, res, next) {
     if(!_.isObject(req.body.bookConfig)){
         req.body.bookConfig = {};
     }
-    console.log(req.body);
+
     let bookStyleJson = JSON.stringify(req.body.bookStyle  ||  "");
-    
+
     let bookTpl = req.body.bookTpl || '<div>内容为空</div>';
     let contentBox = '<div>' + bookTpl + '</div>';
     let baseUrl = 'http://127.0.0.1:' + (process.env.PORT || '3000') + '/';
@@ -153,7 +152,7 @@ const renderBookTpl = function(req, res, next){
     },req.body.bookConfig || {});
     bookConfig.start = true;
     bookConfig.contentBox = contentBox;
-    
+
     let bookConfigStr = JSON.stringify(bookConfig);
     let htmlContent = `<!DOCTYPE html>
 <html lang="zh-cmn-Hans">
@@ -182,8 +181,15 @@ const renderBookTpl = function(req, res, next){
 </html>
 `;
     
-    req.body.html = htmlContent;
-    
+    return htmlContent;
+};
+
+const renderBookTplHtml = function (req, res, next) {
+    req.send(makeBookTplHtml(req,res,next));
+};
+
+const renderBookTpl = function(req, res, next){
+    req.body.html = makeBookTplHtml(req,res,next);
     renderBook(req,res,next);
 };
 
