@@ -172,8 +172,8 @@ yarn && yarn start
 ## 根据 bookjs-eazy 模板片段生成PDF 
 
 - API: http://localhost:3000/api/book-tpl
-- 请求参数：PSOT JSON，请设置一个较长的超时时间
-
+- 请求参数：PSOT JSON，请设置一个较长的超时时间 
+- 测试页面： http://localhost:3000/static/book-tpl/editor.html
 ```javascript
 {
     // PDF 配置：参考 <a href="https://gitee.com/wuxue107/bookjs-eazy#%E9%85%8D%E7%BD%AE%E9%A1%B5%E9%9D%A2%E5%8F%82%E6%95%B0" target="_blank">wuxue107/bookjs-eazy 配置页面参数</a> 
