@@ -26,8 +26,8 @@ const createPuppeteerPool = function (opts) {
                     '--full-memory-crash-report',
                     '--disable-extensions',
                     '--mute-audio',
-                    '–no-zygote',
-                    '–no-first-run',
+                    '--no-zygote',
+                    '--no-first-run',
                     '--start-maximized'
                 ]
             });
@@ -374,7 +374,7 @@ const loadPage = async function(options,doFunc){
                 pageUrl = await page.evaluate(dataUrl => {
                     let arr = dataUrl.split(',');
                     let mime = arr[0].match(/:(.*?);/)[1];
-                    let bstr = atob(arr[1]);
+                    let bstr = decodeURIComponent(escape(atob(arr[1])));
                     return URL.createObjectURL(new Blob([bstr], {
                         type: mime
                     }));

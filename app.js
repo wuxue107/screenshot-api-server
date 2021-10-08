@@ -27,7 +27,7 @@ app.all('*', (req, res, next) => {
     res.setHeader("Server-Version",packageConfig.version);
 
     if (req.method.toLowerCase() == 'options') {
-        res.send(200);  // 让options尝试请求快速结束
+        res.sendStatus(200);  // 让options尝试请求快速结束
     } else {
         next();
     }
