@@ -2,20 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>HTML转PDF 模板测试 bookjs-eazy</title>
+    <title>screenshot-api-server</title>
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="//cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
     <link href="//cdn.bootcdn.net/ajax/libs/codemirror/5.62.2/codemirror.min.css" rel="stylesheet">
     <link href="//cdn.bootcdn.net/ajax/libs/codemirror/5.62.2/theme/darcula.min.css" rel="stylesheet">
-    <script src="codemirror-5.31.0/lib/codemirror.js"></script>
+    <link href="//cdn.bootcdn.net/ajax/libs/codemirror/5.62.2/theme/eclipse.min.css" rel="stylesheet">
+    <link href="//cdn.bootcdn.net/ajax/libs/codemirror/5.62.2/theme/base16-dark.min.css" rel="stylesheet">
 
+    <link href="//cdn.bootcdn.net/ajax/libs/codemirror/5.62.2/addon/lint/lint.min.css" rel="stylesheet">
+    <link href="//cdn.bootcdn.net/ajax/libs/codemirror/5.62.2/addon/hint/show-hint.min.css" rel="stylesheet">
+
+    
     <script src="//cdn.bootcdn.net/ajax/libs/codemirror/5.62.2/codemirror.min.js"></script>
+
     <script src="//cdn.bootcdn.net/ajax/libs/codemirror/5.62.2/mode/css/css.js"></script>
     <script src="//cdn.bootcdn.net/ajax/libs/codemirror/5.62.2/mode/htmlmixed/htmlmixed.min.js"></script>
     <script src="//cdn.bootcdn.net/ajax/libs/codemirror/5.62.2/mode/javascript/javascript.min.js"></script>
+    
+    <script src="//cdn.bootcdn.net/ajax/libs/codemirror/5.62.2/addon/lint/lint.js"></script>
+    <script src="//cdn.bootcdn.net/ajax/libs/codemirror/5.62.2/addon/hint/show-hint.min.js"></script>
     <script src="//cdn.bootcdn.net/ajax/libs/codemirror/5.62.2/addon/lint/json-lint.min.js"></script>
     <script src="//cdn.bootcdn.net/ajax/libs/codemirror/5.62.2/addon/hint/html-hint.min.js"></script>
-    <script src="https://cdn.bootcdn.net/ajax/libs/codemirror/5.62.2/mode/xml/xml.min.js"></script>
+    <script src="//cdn.bootcdn.net/ajax/libs/codemirror/5.62.2/addon/lint/css-lint.min.js"></script>
+    <script src="//cdn.bootcdn.net/ajax/libs/codemirror/5.62.2/mode/xml/xml.min.js"></script>
+
+
+
     <script src="/static/js/jquery.min.js"></script>
     <script src="/static/js/lodash.min.js"></script>
     
@@ -55,7 +68,7 @@
     <div class="container-fluid">
         <div class="row" style="height: 50px;">
             <div class="col-xs-4" style="height: 100%; font-size: 24px;color: white;line-height: 50px;">
-                bookjs-eazy 模板测试
+                bookjs-eazy模板生成PDF在线测试
             </div>
         </div>
         <div class="row" style="height: calc(100% - 50px)">
@@ -425,7 +438,9 @@
         var editorBookStyle = CodeMirror.fromTextArea($('[name=bookStyle]').get(0), {
              lineNumbers: true,
              mode: "css",
+             indentUnit: 4,
              theme: "darcula",
+             lint: true,
              matchBrackets: true,    //括号匹配
          }).on('change',changeCallback);
         
@@ -441,6 +456,7 @@
          var editorBookConfig = CodeMirror.fromTextArea($('[name=bookConfig]').get(0), {
              lineNumbers: true,
              mode: "application/json",
+             indentUnit: 4,
              foldGutter: true,
              theme: "darcula",
              lint: true,
