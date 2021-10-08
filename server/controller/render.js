@@ -158,7 +158,7 @@ const makeBookTplHtml = function (req, res, next) {
 <html lang="zh-cmn-Hans">
 <head>
     <meta charset="UTF-8">
-    <title>TPL-</title>
+    <title>screenshot-api-server</title>
     <base href="${baseUrl}" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
     <meta name="renderer" content="webkit">
