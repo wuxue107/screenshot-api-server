@@ -418,9 +418,10 @@
     </body>
 </html>`;
 
-            let blobUrl = URL.createObjectURL(new Blob([htmlContent], {
-                type: 'text/html'
-            }));
+            let  blobUrl =  'data:text/html;base64,' + btoa(unescape(encodeURIComponent(htmlContent)));
+            // let blobUrl = URL.createObjectURL(new Blob([htmlContent], {
+            //     type: 'text/html'
+            // }));
             $('#show-el').prop('src',blobUrl);
             let params = {
                 bookTpl: bookTpl,
