@@ -1,0 +1,15 @@
+{
+    "pageSize": "ISO_A4",
+    "orientation": "landscape",
+    "padding": "20mm 10mm 20mm 10mm",
+    "simpleCatalog": {},
+    "simplePageNum": {
+        "pendant": "<div class=\"page-num-simple\"><span style=\"\">第${PAGE}页 / 共${TOTAL_PAGE}页</span></div>"
+    },
+    "toolBar": {
+        "serverPrint": true,
+        "webPrint": true,
+        "saveHtml": true
+    },
+    "start": true
+}
