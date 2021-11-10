@@ -4,7 +4,7 @@ set SCRIPT_PATH=%~dp0
 cd %SCRIPT_PATH%
 set MOUNT_PATH=./public
 
-if exist "%MOUNT_PATH%" mkdir "%MOUNT_PATH%"
+if not exist "%MOUNT_PATH%" mkdir "%MOUNT_PATH%"
 
 call wslpath.bat "%MOUNT_PATH%" MOUNT_PATH 2>NUL
 
