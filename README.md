@@ -93,87 +93,17 @@ yarn && yarn start
 }
 ```
 
-## 生成PDF 
-- API: http://localhost:3000/api/pdf
-- 请求参数：PSOT JSON，请设置一个较长的超时时间
-
-```javascript
-{
-    // 要制作为PDF的网页 (pageUrl 、html 参数二选一）
-    "pageUrl":"https://gitee.com/wuxue107",
-    // 要截图的网页HTML (pageUrl 、html 参数二选一）
-    "html" : "<div>bookjs-eazy</div>",
-    // 超时时间，可选，默认：30000
-    "timeout": 30000,
-    // 检查页面是否渲染完成的js表达式，可选，默认: "true"
-    "checkPageCompleteJs": "true",
-    // 页面完成后（checkPageCompleteJs返回为true后）延迟的时间，可选，默认：0
-    "delay": 100
-}
-```
-
-- 响应，生成的pdf文件存放在web可挂载的web目录下,路径/pdf/xxxx.pdf
-
-```javascript
-{
-  "code": 0,
-  "msg": "success",
-  "data": {
-    // 拼接上接口的前缀 http://localhost:3000/ 就是完整PDF地址 
-    // http://localhost:3000/pdf/1614458263411-glduu.pdf
-    // 拼接上接口的前缀 http://localhost:3000/download/可以就可生成在浏览器上的下载链接
-    // http://localhost:3000/download/pdf/1614458263411-glduu.pdf
-    // 拼接上http://localhost:3000/static/js/pdfjs/web/viewer.html?file=/pdf/1614458263411-glduu.pdf
-    // 可使用pdfjs库进行预览
-    "file": "/pdf/1614458263411-glduu.pdf"
-  }
-}
-```
-
 
 # bookjs-easy PDF生成 
 
 - 生成由 <a href="https://gitee.com/wuxue107/bookjs-eazy" target="_blank">wuxue107/bookjs-eazy</a> 制作的PDF页面
-
-## 根据bookjs-eazy 网页生成PDF
-
-- API: http://localhost:3000/api/book
-- 请求参数：PSOT JSON，请设置一个较长的超时时间
-
-```javascript
-{
-    // 由bookjs-eazy制作的网页
-    "pageUrl": "https://bookjs.zhouwuxue.com/eazy-2.html",
-    // 超时时间，可选，默认：30000
-    "timeout": 30000,
-    // 页面完成后（checkPageCompleteJs返回为true后）延迟的时间，可选，默认：0
-    "delay": 100
-}
-```
-
-- 响应，生成的pdf文件存放在web可挂载的web目录下,路径/pdf/xxxx.pdf
-
-```javascript
-{
-  "code": 0,
-  "msg": "success",
-  "data": {
-    // 拼接上接口的前缀 http://localhost:3000/ 就是完整PDF地址 
-    // http://localhost:3000/pdf/1614458263411-glduu.pdf
-    // 拼接上接口的前缀 http://localhost:3000/download/可以就可生成在浏览器上的下载链接
-    // http://localhost:3000/download/pdf/1614458263411-glduu.pdf
-    // 拼接上http://localhost:3000/static/js/pdfjs/web/viewer.html?file=/pdf/1614458263411-glduu.pdf
-    // 可使用pdfjs库进行预览
-    "file": "/pdf/1614458263411-glduu.pdf"
-  }
-}
-```
 
 ## 根据 bookjs-eazy 模板片段生成PDF 
 
 - API: http://localhost:3000/api/book-tpl
 - 请求参数：PSOT JSON，请设置一个较长的超时时间 
 - 测试页面： [在线测试](https://bookjs.zhouwuxue.com/static/book-tpl/editor.html)
+
 ```javascript
 {
     // PDF 配置：参考 <a href="https://gitee.com/wuxue107/bookjs-eazy#%E9%85%8D%E7%BD%AE%E9%A1%B5%E9%9D%A2%E5%8F%82%E6%95%B0" target="_blank">wuxue107/bookjs-eazy 配置页面参数</a> 
@@ -188,6 +118,40 @@ yarn && yarn start
     "bookTpl" : `<div data-op-type="new-page"></div><div data-op-type="pendants"><div class='pendant-title'>第一章：Echart图表</div></div><h1  data-op-type='block'>第1章 Echart图表</h1>`,
     // 超时时间，可选，默认：30000
     "timeout": 30000,
+    "delay": 100
+}
+```
+
+- 响应，生成的pdf文件存放在web可挂载的web目录下,路径/pdf/xxxx.pdf
+
+```javascript
+{
+  "code": 0,
+  "msg": "success",
+  "data": {
+    // 拼接上接口的前缀 http://localhost:3000/ 就是完整PDF地址 
+    // http://localhost:3000/pdf/1614458263411-glduu.pdf
+    // 拼接上接口的前缀 http://localhost:3000/download/可以就可生成在浏览器上的下载链接
+    // http://localhost:3000/download/pdf/1614458263411-glduu.pdf
+    // 拼接上http://localhost:3000/static/js/pdfjs/web/viewer.html?file=/pdf/1614458263411-glduu.pdf
+    // 可使用pdfjs库进行预览
+    "file": "/pdf/1614458263411-glduu.pdf"
+  }
+}
+```
+
+## 根据bookjs-eazy 网页生成PDF
+
+- API: http://localhost:3000/api/book
+- 请求参数：PSOT JSON，请设置一个较长的超时时间
+
+```javascript
+{
+    // 由bookjs-eazy制作的网页
+    "pageUrl": "https://bookjs.zhouwuxue.com/eazy-2.html",
+    // 超时时间，可选，默认：30000
+    "timeout": 30000,
+    // 页面完成后（checkPageCompleteJs返回为true后）延迟的时间，可选，默认：0
     "delay": 100
 }
 ```
@@ -226,6 +190,45 @@ static/js
     - polyfill.min.js
 
 ```
+
+
+## 通用网页生成PDF 
+- API: http://localhost:3000/api/pdf
+- 请求参数：PSOT JSON，请设置一个较长的超时时间
+
+```javascript
+{
+    // 要制作为PDF的网页 (pageUrl 、html 参数二选一）
+    "pageUrl":"https://gitee.com/wuxue107",
+    // 要截图的网页HTML (pageUrl 、html 参数二选一）
+    "html" : "<div>bookjs-eazy</div>",
+    // 超时时间，可选，默认：30000
+    "timeout": 30000,
+    // 检查页面是否渲染完成的js表达式，可选，默认: "true"
+    "checkPageCompleteJs": "true",
+    // 页面完成后（checkPageCompleteJs返回为true后）延迟的时间，可选，默认：0
+    "delay": 100
+}
+```
+
+- 响应，生成的pdf文件存放在web可挂载的web目录下,路径/pdf/xxxx.pdf
+
+```javascript
+{
+  "code": 0,
+  "msg": "success",
+  "data": {
+    // 拼接上接口的前缀 http://localhost:3000/ 就是完整PDF地址 
+    // http://localhost:3000/pdf/1614458263411-glduu.pdf
+    // 拼接上接口的前缀 http://localhost:3000/download/可以就可生成在浏览器上的下载链接
+    // http://localhost:3000/download/pdf/1614458263411-glduu.pdf
+    // 拼接上http://localhost:3000/static/js/pdfjs/web/viewer.html?file=/pdf/1614458263411-glduu.pdf
+    // 可使用pdfjs库进行预览
+    "file": "/pdf/1614458263411-glduu.pdf"
+  }
+}
+```
+
 
 # 字体安装使用
 
