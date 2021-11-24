@@ -14,7 +14,7 @@ if "%1" == "" (
 
 if "%1" == "base" (
     docker rmi wuxue107/screenshot-api-base:latest
-    docker  build -f Dockerfile-Base -t wuxue107/screenshot-api-base:1.0.0 .
+    docker  build -f Dockerfile-Base -t wuxue107/screenshot-api-base:1.1.0 .
 )
 
 if "%1" == "full" (
