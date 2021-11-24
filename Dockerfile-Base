@@ -16,7 +16,7 @@ RUN \
       libwayland-cursor0 libwayland-egl1-mesa libwayland-server0 libx11-xcb1 libxaw7 libxcb-dri2-0 libxcb-dri3-0 libxcb-glx0 libxcb-present0 libxcb-shape0 libxcb-sync1 libxcb-xfixes0 libxft2 libxkbcommon0 \
       libxmu6 libxmuu1 libxshmfence1 libxtst6 libxv1 libxxf86dga1 libxxf86vm1 x11-utils xdg-utils xkb-data \
       libfontconfig1-dev libfreetype6-dev libjpeg-dev libpng-dev libssl-dev libx11-dev libxext-dev libxrender-dev ca-certificates \
-    && wget --output-document=wkhtmltox.deb https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.stretch_amd64.deb > \
+    && wget --output-document=wkhtmltox.deb https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.stretch_amd64.deb \
     && (dpkg -i wkhtmltox.deb; echo ignore wkhtmlx error) && apt --fix-broken -y install && rm -rf wkhtmltox.deb \
     && npm config set registry https://registry.npm.taobao.org -g \
     && npm config set sass_binary_site http://cdn.npm.taobao.org/dist/node-sass -g \
