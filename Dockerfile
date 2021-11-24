@@ -1,4 +1,4 @@
-FROM wuxue107/screenshot-api-base
+FROM wuxue107/screenshot-api-base:1.1.0
 MAINTAINER 575065955@qq.com
 
 COPY latest.tar /
