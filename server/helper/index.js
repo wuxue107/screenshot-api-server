@@ -1,7 +1,7 @@
 const moment = require('moment');
-
 const NodeCache = require( "node-cache" );
-
+const stringRandom = require('string-random');
+const pathModule = require('path');
 let helper = {
     apiMsg : function(code ,msg , data){
         if (code === undefined) code = 0;
@@ -37,15 +37,22 @@ let helper = {
         
         return __dirname + '/../..' + path;
     },
+
+    normalizePath : function(filePath){
+        let reg = (pathModule.sep === '\\')? /\//g : /\\/g;
+        return filePath.replace(reg,pathModule.sep);
+    },
     
-    getPdfPath : function (path) {
-        if(path === undefined){
+    getPublicPath : function (path) {
+        if(path === undefined || path === '' || path === null){
             path = '';
         }else{
-            path = '/' + path;
+            if(path[0] !== '/'){
+                path = '/' + path;
+            }
         }
-
-        return __dirname + '/../../public/pdf' + path;
+      
+        return __dirname + '/../../public' + path;
     },
     
     log : function (msg) {
@@ -61,6 +68,21 @@ let helper = {
     stringToDataUrl : function (text,type) {
         type = type || 'text/html';
         return 'data:' + type + ';base64,' + Buffer.from(text).toString('base64');
+    },
+    
+    makePdfFileInfo : function(){
+        let pdfFileName = stringRandom(20, { numbers: false }) + '.pdf';
+        let date = moment(Date.now()).format('YYYY-MM-DD');
+        let relate = 'pdf/' + date;
+        let pdfDailyPath = helper.getPublicPath(relate);
+        if(!require('fs').existsSync(pdfDailyPath)){
+            require('fs').mkdirSync(pdfDailyPath,{recursive:true})
+        }
+
+        return  {
+            fullPath : pdfDailyPath + '/' + pdfFileName,
+            relatePath : relate + '/' + pdfFileName,
+        };
     }
 };
 

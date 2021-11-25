@@ -407,7 +407,7 @@ const loadPage = async function(options,doFunc){
  * 初始化浏览器
  */
 const initBrowserPool = function(maxProcess){
-    let pdfPath = helper.getPdfPath();
+    let pdfPath = helper.getPublicPath('pdf');
     if(!fs.existsSync(pdfPath)){
         fs.mkdirSync(pdfPath);
     }
