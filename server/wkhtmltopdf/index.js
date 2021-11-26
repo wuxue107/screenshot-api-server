@@ -36,7 +36,7 @@ const optionsPageSize = ["A0", "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "
 const wkHtmlToPdf = function (url, pdfFile, pageSize, orientation, delay, timeout, checkWindowStatus) {
     orientation = (orientation + "").toLowerCase();
     orientation = orientation === "landscape" ? "Landscape" : "Portrait";
-    timeout = ~~(timeout || 4000);
+    timeout = ~~(timeout || 30000);
     if (timeout > 60000) {
         timeout = 60000;
     }
@@ -44,7 +44,7 @@ const wkHtmlToPdf = function (url, pdfFile, pageSize, orientation, delay, timeou
         timeout = 3000;
     }
 
-    delay = ~~(delay || 100);
+    delay = ~~(delay || 200);
     if (delay > 60000) {
         delay = 60000;
     }
@@ -61,6 +61,7 @@ const wkHtmlToPdf = function (url, pdfFile, pageSize, orientation, delay, timeou
         "--no-stop-slow-scripts",
         "--enable-internal-links",
         "--debug-javascript",
+        "--enable-internal-links",
         "--print-media-type",
         "--outline", "--outline-depth", "3",
         "--log-level", "info",
