@@ -98,7 +98,7 @@ yarn && yarn start
 
 - 生成由 <a href="https://gitee.com/wuxue107/bookjs-eazy" target="_blank">wuxue107/bookjs-eazy</a> 制作的PDF页面
 
-## 根据 bookjs-eazy 模板片段生成PDF 
+## 根据 bookjs-eazy 模板片段生成PDF (Chrome Headless)
 
 - API: http://localhost:3000/api/book-tpl
 - 请求参数：PSOT JSON，请设置一个较长的超时时间 
@@ -140,7 +140,7 @@ yarn && yarn start
 }
 ```
 
-## 根据bookjs-eazy 网页生成PDF
+## 根据bookjs-eazy 网页生成PDF(Chrome Headless)
 
 - API: http://localhost:3000/api/book
 - 请求参数：PSOT JSON，请设置一个较长的超时时间
@@ -174,6 +174,46 @@ yarn && yarn start
 }
 ```
 
+## 根据bookjs-eazy 网页生成PDF(wkhtmltopdf)
+
+- API: http://localhost:3000/api/wkhtmltopdf-book
+- 请求参数：PSOT JSON，请设置一个较长的超时时间
+
+```javascript
+{
+    // 由bookjs-eazy制作的网页
+    "pageUrl": "https://bookjs.zhouwuxue.com/eazy-2.html",
+    // 超时时间，可选，默认：30000
+    "timeout": 30000,
+    // 页面完成后（checkPageCompleteJs返回为true后）延迟的时间，可选，默认：0
+    "delay" : 100,
+    // 纸张
+    "orientation": "portrait", // 纸张方向 "portrait"，"landscape"
+    "pageSize":"A4", // 纸张大小
+    // 或 
+    "pageWidth" : "210", //mm
+    "pageHeight" : "297",
+
+}
+```
+
+- 响应，生成的pdf文件存放在web可挂载的web目录下,路径/pdf/xxxx.pdf
+
+```javascript
+{
+  "code": 0,
+  "msg": "success",
+  "data": {
+    // 拼接上接口的前缀 http://localhost:3000/ 就是完整PDF地址 
+    // http://localhost:3000/pdf/1614458263411-glduu.pdf
+    // 拼接上接口的前缀 http://localhost:3000/download/可以就可生成在浏览器上的下载链接
+    // http://localhost:3000/download/pdf/1614458263411-glduu.pdf
+    // 拼接上http://localhost:3000/static/js/pdfjs/web/viewer.html?file=/pdf/1614458263411-glduu.pdf
+    // 可使用pdfjs库进行预览
+    "file": "/pdf/1614458263411-glduu.pdf"
+  }
+}
+```
 # 内置静态资源
 
 - http://localhost:3000/static/ 下内置了 <a href="https://gitee.com/wuxue107/bookjs-eazy" target="_blank">bookjs-eazy</a>的一些依赖静态资源
