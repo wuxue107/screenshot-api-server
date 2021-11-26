@@ -11,6 +11,10 @@ const execCommand = async function (commandFile, commandArgs, timeout) {
         helper.info(commandFile);
         helper.info(commandArgs);
 
+        if(!(commandArgs instanceof Array)){
+            commandArgs = commandOptionsToArgs(commandArgs)
+        }
+        
         subProcess = execFile(commandFile, commandArgs, {
             maxBuffer: 4 * 1024 * 1024,
             timeout: timeout
@@ -33,6 +37,23 @@ const execCommand = async function (commandFile, commandArgs, timeout) {
 };
 
 const optionsPageSize = ["A0", "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "B0", "B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8", "B9", "B10", "C5E", "COMM10E", "DLE", "EXECUTIVE", "FOLIO", "LEDGER", "LEGAL", "LETTER", "TABLOID"];
+
+const commandOptionsToArgs = function(option){
+    let commandArgs = [];
+    for (let name in option){
+        let val = option[name];
+        if(val === false || val === undefined || val === null){
+            continue;
+        }
+        
+        commandArgs.push(name);
+        if(val !== true){
+            commandArgs.push(val+'')
+        }
+    }
+    
+    return commandArgs;
+};
 const wkHtmlToPdf = function (url, pdfFile, pageSize, orientation, delay, timeout, checkWindowStatus) {
     orientation = (orientation + "").toLowerCase();
     orientation = orientation === "landscape" ? "Landscape" : "Portrait";
@@ -52,45 +73,47 @@ const wkHtmlToPdf = function (url, pdfFile, pageSize, orientation, delay, timeou
         delay = 10;
     }
 
-    let commandArgs = [
-        "--disable-smart-shrinking",
-        "--margin-left", "0",
-        "--margin-right", "0",
-        "--margin-top", "0",
-        "--margin-bottom", "0",
-        "--no-stop-slow-scripts",
-        "--enable-internal-links",
-        "--debug-javascript",
-        "--enable-internal-links",
-        "--print-media-type",
-        "--outline", "--outline-depth", "3",
-        "--log-level", "info",
-        "--orientation", orientation,
-    ];
-
+    let commandOptions = {
+        "--disable-smart-shrinking" : true,
+        "--margin-left" : "0",
+        "--margin-right" : "0",
+        "--margin-top": "0",
+        "--margin-bottom": "0",
+        "--no-stop-slow-scripts" : true,
+        "--enable-external-links" :true,
+        "--enable-internal-links" : true,
+        "--debug-javascript": true,
+        "--print-media-type" :true,
+        "--outline" : true,
+        "--outline-depth" : "3",
+        "--log-level": "info",
+        "--orientation" : orientation,
+    };
+    
     if (typeof pageSize === 'string') {
         pageSize = (pageSize + "").toUpperCase();
         if (!optionsPageSize.includes(pageSize)) {
             helper.error("invalid pageSize:" + pageSize);
             pageSize = "A4";
         }
-        commandArgs.push("--page-size", pageSize);
+        commandOptions["--page-size"] = pageSize;
     } else {
         if (!pageSize.pageWidth || !pageSize.pageHeight) {
             throw "无效的页面尺寸信息";
         }
-
-        commandArgs.push("--page-width", pageSize.pageWidth);
-        commandArgs.push("--page-height", pageSize.pageHeight);
+        commandOptions["--page-width"] = pageSize.pageWidth;
+        commandOptions["--page-height"] = pageSize.pageHeight;
     }
 
     if (delay) {
-        commandArgs.push("--javascript-delay", delay)
+        commandOptions["--javascript-delay"] =delay;
     }
+    
     if (checkWindowStatus) {
-        commandArgs.push("--window-status", checkWindowStatus)
+        commandOptions["--window-status"] = checkWindowStatus;
     }
-
+    
+    let commandArgs = commandOptionsToArgs(commandOptions);
     commandArgs.push(url, pdfFile);
     return execCommand("wkhtmltopdf", commandArgs, timeout);
 };
