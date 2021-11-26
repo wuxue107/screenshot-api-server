@@ -1,7 +1,6 @@
 let helper = require('../helper/index');
 let browserHelper = require('../puppeteer/index');
 let wkHtmlToPdfHelper = require('../wkhtmltopdf/index');
-let pathModule = require('path');
 const _ = require('lodash');
 
 const urlencode = require('urlencode');
@@ -43,6 +42,13 @@ const renderBook = function (req, res, next) {
     return renderPdf(req, res, next);
 };
 
+/**
+ * 从网页中截取一张图片
+ *
+ * @param req
+ * @param res
+ * @param next
+ */
 const renderImage = function (req, res, next) {
     let postParam = req.body;
     let element = (postParam.element || 'body') + '';
@@ -67,6 +73,13 @@ const renderImage = function (req, res, next) {
     });
 };
 
+/**
+ * 从网页中截取多张图片
+ * 
+ * @param req
+ * @param res
+ * @param next
+ */
 const renderImages = function (req, res, next) {
     let postParam = req.body;
     let elements = postParam.elements || [];
@@ -91,6 +104,12 @@ const renderImages = function (req, res, next) {
     });
 };
 
+/**
+ * 根据PDF路径，下载PDF
+ * @param req
+ * @param res
+ * @param next
+ */
 const downloadPdf = function (req, res, next) {
     let fileName = req.query.fileName || 'output.pdf';
     let file = req.params[0].replace(/\.\./g, "");
@@ -98,10 +117,10 @@ const downloadPdf = function (req, res, next) {
         res.sendStatus(400);
         return;
     }
-
-    require('fs').exists(helper.getPublicPath( file), function (isExist) {
+    let fullPath = helper.getPublicPath(file);
+    require('fs').exists(fullPath, function (isExist) {
         if (isExist) {
-            fileName = fileName.replace(/[\r\n<>\\\/\|\:\'\"\*\?]/g, "")
+            fileName = fileName.replace(/[\r\n<>\\\/\|\:\'\"\*\?]/g, "");
             let headers = {
                 "Content-type": "application/octet-stream",
                 "Content-Transfer-Encoding": "binary",
@@ -127,6 +146,14 @@ const downloadPdf = function (req, res, next) {
     });
 };
 
+/**
+ * 生成bookjs-eazy页面模板
+ * 
+ * @param req
+ * @param res
+ * @param next
+ * @returns {string}
+ */
 const makeBookTplHtml = function (req, res, next) {
     if (!_.isObject(req.body.bookConfig)) {
         req.body.bookConfig = {};
@@ -194,13 +221,27 @@ const renderBookPage = function (req, res, next) {
     });
 };
 
+/**
+ * 使用wkhtmltopdf URL转PDF
+ * 
+ * @param req
+ * @param res
+ * @param next
+ * 
+ * POST JSON
+ * {
+ *   "pageUrl":"http://localhost:8080/eazy-test.html",
+ *   "orientation":"landscape",
+ *   "pageSize":"A4" 
+ *   // pageWidth : 192, pageHeight:97
+ *   // windowStatus : "PDFComplete"
+ * }
+ */
 const renderWkHtmlToPdf = function (req, res, next) {
     let postParam = req.body;
 
     let pdfPathInfo = helper.makePdfFileInfo();
-    wkHtmlToPdfHelper.wkHtmlToPdf(postParam.pageUrl, pdfPathInfo.fullPath, postParam.pageSize, postParam.orientation, postParam.delay, postParam.timeout,postParam.windowStatus).catch(function (e) {
-        res.send(helper.failMsg("fail:" + e.toString()));
-    }).then(function () {
+    wkHtmlToPdfHelper.wkHtmlToPdf(postParam.pageUrl, pdfPathInfo.fullPath, postParam.pageSize, postParam.orientation, postParam.delay, postParam.timeout,postParam.windowStatus).then(function () {
         require('fs').exists(pdfPathInfo.fullPath, function (isExist) {
             if (isExist) {
                 res.send(helper.successMsg({file: pdfPathInfo.relatePath}))
@@ -208,9 +249,18 @@ const renderWkHtmlToPdf = function (req, res, next) {
                 res.send(helper.failMsg("make pdf file failed"));
             }
         });
+    }).catch(function (e) {
+        res.send(helper.failMsg("fail:" + e.toString()));
     });
 };
 
+/**
+ * 转换bookjs-eazy编写的页面转PDF
+ * 
+ * @param req
+ * @param res
+ * @param next
+ */
 const renderWkHtmlToPdfBook = function (req, res, next) {
     req.body.windowStatus = 'PDFComplete';
     renderWkHtmlToPdf(req,res,next);

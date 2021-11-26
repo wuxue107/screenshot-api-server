@@ -6,17 +6,15 @@ const genericPool = require("generic-pool");
 const execCommand = async function (commandFile, commandArgs, timeout) {
     let index = await commandPool.acquire();
     let subProcess;
-    let p = new Promise(function (resolve, reject) {
+    return new Promise(function (resolve, reject) {
         helper.info("run command:");
         helper.info(commandFile);
         helper.info(commandArgs);
         
-
         subProcess = execFile(commandFile, commandArgs, {
             maxBuffer: 4 * 1024 * 1024,
             timeout: timeout
         }, function (err, stdout, stderr) {
-            helper.log("back");
             if (err) {
                 helper.error(err);
                 commandPool.release(index);
@@ -32,28 +30,14 @@ const execCommand = async function (commandFile, commandArgs, timeout) {
         });
         helper.info("PID:" + subProcess.pid);
     });
-    // p.error(function(err){
-    //     commandPool.release(index);
-    //     if(subProcess && !subProcess.killed){
-    //         subProcess.kill();
-    //         p.reject()
-    //     }
-    // });
-    return p;
 };
 
 const optionsPageSize = ["A0", "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "B0", "B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8", "B9", "B10", "C5E", "COMM10E", "DLE", "EXECUTIVE", "FOLIO", "LEDGER", "LEGAL", "LETTER", "TABLOID", "CUSTOM"];
 const wkHtmlToPdf = async function (url, pdfFile, pageSize, orientation,delay, timeout,checkWindowStatus) {
-    orientation = orientation === "Landscape" ? "Landscape" : "Portrait";
+    orientation = (orientation + "").toLowerCase();
+    orientation = orientation === "landscape" ? "Landscape" : "Portrait";
     timeout = ~~(timeout || 4000);
     delay = ~~(delay || 100);
-    pageSize = (pageSize + "").toUpperCase();
-    if (!optionsPageSize.includes(pageSize)) {
-        helper.error("invalid pageSize:" + pageSize);
-        pageSize = "A4";
-    }
-
-
 
     let commandArgs = [
         "--disable-smart-shrinking",
@@ -68,9 +52,24 @@ const wkHtmlToPdf = async function (url, pdfFile, pageSize, orientation,delay, t
         "--outline", "--outline-depth", "3",
         "--log-level", "info",
         "--orientation", orientation,
-        "--page-size", pageSize,
     ];
-    
+
+    if(typeof pageSize === 'string'){
+        pageSize = (pageSize + "").toUpperCase();
+        if (!optionsPageSize.includes(pageSize)) {
+            helper.error("invalid pageSize:" + pageSize);
+            pageSize = "A4";
+        }
+        commandArgs.push("--page-size", pageSize);
+    }else{
+        if(!pageSize.pageWidth || !pageSize.pageHeight){
+            throw "无效的页面尺寸信息";
+        }
+        
+        commandArgs.push("--page-width", pageSize.pageWidth);
+        commandArgs.push("--page-height", pageSize.pageHeight);
+    }
+
     if(delay){
         commandArgs.push("--javascript-delay", delay)
     }
