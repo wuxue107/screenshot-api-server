@@ -2,6 +2,7 @@ let helper = require('../helper/index');
 let browserHelper = require('../puppeteer/index');
 let wkHtmlToPdfHelper = require('../wkhtmltopdf/index');
 const _ = require('lodash');
+const pdfMeta = require('../pdfmeta');
 
 const urlencode = require('urlencode');
 
@@ -22,7 +23,10 @@ const renderPdf = function (req, res, next) {
         checkPageCompleteJs: postParam.checkPageCompleteJs,
     }, async function (page) {
         await browserHelper.renderPdf(page, pdfPathInfo.fullPath);
-        if (require('fs').existsSync(pdfPathInfo.fullPath)) {
+        let fsExist = await require('fs').exists(pdfPathInfo.fullPath);
+        if (fsExist) {
+            let metaInfo = typeof req.body.metaInfo == 'object' ? req.body.metaInfo : {};
+            await pdfMeta.setPdfMetaInfo(pdfPathInfo.fullPath,metaInfo);
             res.send(helper.successMsg({file: pdfPathInfo.relatePath}))
         } else {
             res.send(helper.failMsg("render fail"))
@@ -242,8 +246,10 @@ const renderWkHtmlToPdf = function (req, res, next) {
 
     let pdfPathInfo = helper.makePdfFileInfo();
     wkHtmlToPdfHelper.wkHtmlToPdf(postParam.pageUrl, pdfPathInfo.fullPath, postParam.pageSize, postParam.orientation, postParam.delay, postParam.timeout,postParam.windowStatus).then(function () {
-        require('fs').exists(pdfPathInfo.fullPath, function (isExist) {
+        require('fs').exists(pdfPathInfo.fullPath, async function (isExist) {
             if (isExist) {
+                let metaInfo = typeof req.body.metaInfo == 'object' ? req.body.metaInfo : {};
+                await pdfMeta.setPdfMetaInfo(pdfPathInfo.fullPath,metaInfo);
                 res.send(helper.successMsg({file: pdfPathInfo.relatePath}))
             } else {
                 res.send(helper.failMsg("make pdf file failed"));
