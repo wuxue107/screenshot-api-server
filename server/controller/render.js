@@ -23,7 +23,7 @@ const renderPdf = function (req, res, next) {
         checkPageCompleteJs: postParam.checkPageCompleteJs,
     }, async function (page) {
         await browserHelper.renderPdf(page, pdfPathInfo.fullPath);
-        let fsExist = await require('fs').exists(pdfPathInfo.fullPath);
+        let fsExist = require('fs').existsSync(pdfPathInfo.fullPath);
         if (fsExist) {
             let metaInfo = typeof req.body.metaInfo == 'object' ? req.body.metaInfo : {};
             await pdfMeta.setPdfMetaInfo(pdfPathInfo.fullPath,metaInfo);
