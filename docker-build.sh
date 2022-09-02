@@ -3,7 +3,7 @@
 SCRIPT_PATH=$(cd `dirname "$0"`;pwd)
 cd "${SCRIPT_PATH}";
 
-DOCKER_IMAGE_VERSION=$(node --eval="console.log(require('./package.json').version)")
+DOCKER_IMAGE_VERSION=$(env node --eval="console.log(require('./package.json').version)")
 
 if [ "$1" == "" ]; then
   git archive --format=tar --worktree-attributes --prefix=screenshot-api-server/ -o latest.tar HEAD
