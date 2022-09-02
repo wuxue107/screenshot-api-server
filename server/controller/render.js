@@ -244,6 +244,12 @@ const renderBookPage = function (req, res, next) {
 const renderWkHtmlToPdf = function (req, res, next) {
     let postParam = req.body;
 
+    if(!req.pageSize){
+        req.pageSize = {
+            pageWidth : req.pageWidth,
+            pageHeight : req.pageHeight,
+        }
+    }
     let pdfPathInfo = helper.makePdfFileInfo();
     wkHtmlToPdfHelper.wkHtmlToPdf(postParam.pageUrl, pdfPathInfo.fullPath, postParam.pageSize, postParam.orientation, postParam.delay, postParam.timeout,postParam.windowStatus).then(function () {
         require('fs').exists(pdfPathInfo.fullPath, async function (isExist) {
