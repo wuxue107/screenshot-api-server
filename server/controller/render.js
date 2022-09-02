@@ -246,8 +246,8 @@ const renderWkHtmlToPdf = function (req, res, next) {
 
     if(!req.pageSize){
         req.pageSize = {
-            pageWidth : req.pageWidth,
-            pageHeight : req.pageHeight,
+            pageWidth : ~~req.pageWidth,
+            pageHeight : ~~req.pageHeight,
         }
     }
     let pdfPathInfo = helper.makePdfFileInfo();
