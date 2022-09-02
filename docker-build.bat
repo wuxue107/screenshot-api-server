@@ -13,6 +13,9 @@ if "%1" == "" (
     docker rmi wuxue107/screenshot-api-server:%VERSION%
     docker build -f Dockerfile -t wuxue107/screenshot-api-server:%VERSION% .
     del /f latest.tar
+    
+    docker rmi wuxue107/screenshot-api-server:latest
+    docker tag wuxue107/screenshot-api-server:%VERSION% wuxue107/screenshot-api-server:latest
 )
 
 if "%1" == "base" (
