@@ -52,7 +52,7 @@ let helper = {
             }
         }
       
-        return __dirname + '/../../public' + path;
+        return require('path').join(__dirname + '/../../public', path);
     },
     
     log : function (msg) {
@@ -70,16 +70,24 @@ let helper = {
         return 'data:' + type + ';base64,' + Buffer.from(text).toString('base64');
     },
     
+    getPdfDailyPathByTimestamp : function(timestamp){
+        let date = moment(timestamp).format('YYYY-MM-DD');
+        let relate = 'pdf/' + date;
+        return helper.getPublicPath(relate);
+    },
+    
     makePdfFileInfo : function(){
         let pdfFileName = stringRandom(20, { numbers: false }) + '.pdf';
+
         let date = moment(Date.now()).format('YYYY-MM-DD');
         let relate = 'pdf/' + date;
-        let pdfDailyPath = helper.getPublicPath(relate);
+        let pdfDailyPath =  helper.getPublicPath(relate);
         if(!require('fs').existsSync(pdfDailyPath)){
             require('fs').mkdirSync(pdfDailyPath,{recursive:true})
         }
 
         return  {
+            pdfDailyPath : pdfDailyPath,
             fullPath : pdfDailyPath + '/' + pdfFileName,
             relatePath : relate + '/' + pdfFileName,
         };

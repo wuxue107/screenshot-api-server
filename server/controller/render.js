@@ -3,8 +3,31 @@ let browserHelper = require('../puppeteer/index');
 let wkHtmlToPdfHelper = require('../wkhtmltopdf/index');
 const _ = require('lodash');
 const pdfMeta = require('../pdfmeta');
-
+const fs =require('fs');
 const urlencode = require('urlencode');
+
+// 定时删除PDF文件任务
+require('../cron/pdfclean');
+
+const processPdfMeta = function (req,res,pdfPathInfo) {
+    helper.info("process pdf meta:" + pdfPathInfo.relatePath);
+    return fs.access(pdfPathInfo.fullPath, fs.constants.R_OK, function (err) {
+        if (err) {
+            res.send(helper.failMsg("make pdf file failed:" + err));
+            return;
+        }
+
+        let metaInfo = typeof req.body.metaInfo == 'object' ? req.body.metaInfo : {};
+
+        pdfMeta.setPdfMetaInfo(pdfPathInfo.fullPath, metaInfo).then(()=>{
+            helper.info("process pdf meta complete:" + pdfPathInfo.relatePath);
+            res.send(helper.successMsg({file: pdfPathInfo.relatePath}));
+        }).catch(function (err) {
+            helper.error("send pdf metainfo failed:" + pdfPathInfo.relatePath + "," + err);
+            res.send(helper.failMsg("send pdf metainfo failed:" + pdfPathInfo.relatePath + "," + err));
+        });
+    });
+};
 
 const renderPdf = function (req, res, next) {
     req.body.timeout = req.body.timeout || 120000;
@@ -21,16 +44,9 @@ const renderPdf = function (req, res, next) {
         timeout: ~~postParam.timeout,
         delay: ~~postParam.delay,
         checkPageCompleteJs: postParam.checkPageCompleteJs,
-    }, async function (page) {
+    },  async function (page) {
         await browserHelper.renderPdf(page, pdfPathInfo.fullPath);
-        let fsExist = require('fs').existsSync(pdfPathInfo.fullPath);
-        if (fsExist) {
-            let metaInfo = typeof req.body.metaInfo == 'object' ? req.body.metaInfo : {};
-            await pdfMeta.setPdfMetaInfo(pdfPathInfo.fullPath,metaInfo);
-            res.send(helper.successMsg({file: pdfPathInfo.relatePath}))
-        } else {
-            res.send(helper.failMsg("render fail"))
-        }
+        processPdfMeta(req,res,pdfPathInfo);
     }).catch(function (e) {
         let errorMsg = e.toString();
         if (/ERR_CONNECTION_REFUSED/.test(errorMsg)) {
@@ -122,30 +138,31 @@ const downloadPdf = function (req, res, next) {
         return;
     }
     let fullPath = helper.getPublicPath(file);
-    require('fs').exists(fullPath, function (isExist) {
-        if (isExist) {
-            fileName = fileName.replace(/[\r\n<>\\\/\|\:\'\"\*\?]/g, "");
-            let headers = {
-                "Content-type": "application/octet-stream",
-                "Content-Transfer-Encoding": "binary",
-            };
-            let userAgent = req.headers['user-agent'];
-            if ((/Safari/i).test(userAgent) && !(/Chrome/i).test(userAgent)) {
-                headers['Content-Disposition'] = 'attachment; filename*=UTF-8\'\'' + urlencode(fileName, 'UTF-8');
-            } else {
-                headers['Content-Disposition'] = 'attachment;filename="' + urlencode(fileName, 'UTF-8') + '"';
-            }
-
-            try {
-                res.sendFile(file, {
-                    headers: headers,
-                    root: helper.getPublicPath(),
-                })
-            } catch (e) {
-                res.sendStatus(500);
-            }
-        } else {
+    fs.access(fullPath, fs.constants.R_OK,function (err) {
+        if (err) {
             res.sendStatus(404);
+            return;
+        }
+
+        fileName = fileName.replace(/[\r\n<>\\\/\|\:\'\"\*\?]/g, "");
+        let headers = {
+            "Content-type": "application/octet-stream",
+            "Content-Transfer-Encoding": "binary",
+        };
+        let userAgent = req.headers['user-agent'];
+        if ((/Safari/i).test(userAgent) && !(/Chrome/i).test(userAgent)) {
+            headers['Content-Disposition'] = 'attachment; filename*=UTF-8\'\'' + urlencode(fileName, 'UTF-8');
+        } else {
+            headers['Content-Disposition'] = 'attachment;filename="' + urlencode(fileName, 'UTF-8') + '"';
+        }
+
+        try {
+            res.sendFile(file, {
+                headers: headers,
+                root: helper.getPublicPath(),
+            })
+        } catch (e) {
+            res.sendStatus(500);
         }
     });
 };
@@ -225,6 +242,8 @@ const renderBookPage = function (req, res, next) {
     });
 };
 
+
+
 /**
  * 使用wkhtmltopdf URL转PDF
  * 
@@ -252,15 +271,7 @@ const renderWkHtmlToPdf = function (req, res, next) {
     }
     let pdfPathInfo = helper.makePdfFileInfo();
     wkHtmlToPdfHelper.wkHtmlToPdf(postParam.pageUrl, pdfPathInfo.fullPath, postParam.pageSize, postParam.orientation, postParam.delay, postParam.timeout,postParam.windowStatus).then(function () {
-        require('fs').exists(pdfPathInfo.fullPath, async function (isExist) {
-            if (isExist) {
-                let metaInfo = typeof req.body.metaInfo == 'object' ? req.body.metaInfo : {};
-                await pdfMeta.setPdfMetaInfo(pdfPathInfo.fullPath,metaInfo);
-                res.send(helper.successMsg({file: pdfPathInfo.relatePath}))
-            } else {
-                res.send(helper.failMsg("make pdf file failed"));
-            }
-        });
+        processPdfMeta(req,res,pdfPathInfo);
     }).catch(function (e) {
         res.send(helper.failMsg("fail:" + e.toString()));
     });

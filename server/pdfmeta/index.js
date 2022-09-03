@@ -6,7 +6,6 @@ const setPdfMetaInfo = function(pdfFile,metaInfoUpdate){
         Creator: 'screenshot-api-server',
         Producer: 'bookjs-eazy',
     };
-    
     if(typeof metaInfoUpdate.Author === 'string'){
         metaInfo.Author = metaInfoUpdate.Author;
     }
@@ -21,10 +20,7 @@ const setPdfMetaInfo = function(pdfFile,metaInfoUpdate){
         .then(function () {
             return exiftool.writeMetadata(pdfFile, metaInfo);
         })
-        .then(() => exiftool.close())
-        .catch(err => {
-            console.error(err)
-        })
+        .then(() => exiftool.close());
 };
 
 module.exports = {
