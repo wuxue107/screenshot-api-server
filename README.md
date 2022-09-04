@@ -40,7 +40,9 @@ yarn && yarn start
     // 检查页面是否渲染完成的js表达式，可选，默认: "true"
     "checkPageCompleteJs": "document.readyState === 'complete'",
     // 页面完成后（checkPageCompleteJs返回为true后）延迟的时间，可选，默认：0
-    "delay": 100
+    "delay": 100,
+    // 浏览器视窗宽度
+    "width": 1920
 }
 ```
 
@@ -74,7 +76,9 @@ yarn && yarn start
     // 检查页面是否渲染完成的js表达式，可选，默认: "true"
     "checkPageCompleteJs": "document.readyState === 'complete'",
     // 页面完成后（checkPageCompleteJs返回为true后）延迟的时间，可选，默认：0
-    "delay": 100
+    "delay": 100,
+   // 浏览器视窗宽度
+    "width": 1920
 }
 ```
 
