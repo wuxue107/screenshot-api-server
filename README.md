@@ -22,6 +22,12 @@ yarn && yarn start
 # API 接口
 ## 截图
 
+### 注意事项：
+
+    生成的dataUrl图片，如果过大，粘贴到浏览器地址栏上显示的图片有时会显示不完整。
+    并不是只截取了一半，而是因为浏览器URL浏长度限制的原因。
+    将其复制给图片scr属性，或保持为文件，则可以看到完整图片
+
 ### 单张图片截取
 
 - API: http://localhost:3000/api/img
@@ -41,8 +47,9 @@ yarn && yarn start
     "checkPageCompleteJs": "document.readyState === 'complete'",
     // 页面完成后（checkPageCompleteJs返回为true后）延迟的时间，可选，默认：0
     "delay": 100,
-    // 浏览器视窗宽度
-    "width": 1920
+    // 浏览器视窗宽度、高度。在响应式布局中，有时会体现出不同样式
+    "width": 1920,
+    "height": 1280
 }
 ```
 
@@ -77,8 +84,9 @@ yarn && yarn start
     "checkPageCompleteJs": "document.readyState === 'complete'",
     // 页面完成后（checkPageCompleteJs返回为true后）延迟的时间，可选，默认：0
     "delay": 100,
-   // 浏览器视窗宽度
-    "width": 1920
+    // 浏览器视窗宽度、高度。在响应式布局中，有时会体现出不同样式
+    "width": 1920,
+    "height": 1280
 }
 ```
 
