@@ -4,6 +4,7 @@ const fs = require('fs');
 const helper = require('../helper');
 const genericPool = require("generic-pool");
 const os = require('os');
+const { PendingXHR } = require('pending-xhr-puppeteer');
 
 const createPuppeteerPool = function (opts) {
     let puppeteerFactory = {
@@ -54,6 +55,13 @@ const sleep = async function(timeout){
     });
 };
 
+const waitPageRequestComplete = async function(page){
+    helper.info("wait page all request finish");
+    const pendingXHR = new PendingXHR(page);
+// Here all xhr requests are not finished
+    await pendingXHR.waitForAllXhrFinished();
+};
+
 /**
  * 页面打开后，通过checkPageCompleteJs代码段在网页里的js环境执行，检查网页是否加载完整
  * 
@@ -64,6 +72,10 @@ const sleep = async function(timeout){
  * @returns {Promise}
  */
 const waitPageComplete = async function(page,timeout,checkPageCompleteJs){
+    if(!checkPageCompleteJs){
+        return waitPageRequestComplete(page);
+    }
+    
     timeout = ~~timeout;
     if(timeout < 1000){
         timeout = 1000;
@@ -95,7 +107,7 @@ const waitPageComplete = async function(page,timeout,checkPageCompleteJs){
                     if(time > timeout){
                         setTimeout(function () {
                             clearInterval(t);
-                            reject('timeout');
+                            reject('waitPageComplete timeout');
                         },20);
                     }
                 }
@@ -277,7 +289,7 @@ const getPage = async function(doFunc,timeout){
                     closeCurrentPage();
                 }
                 reject("timeout " + timeout + "ms");
-            },timeout + 5);
+            },timeout + 25);
             
             closeCurrentPage = function () {
                 clearTimeout(timeoutId);

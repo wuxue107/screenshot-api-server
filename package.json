@@ -19,6 +19,7 @@
     "node-cache": "^5.1.2",
     "node-cron": "^3.0.2",
     "node-exiftool": "^2.3.0",
+    "pending-xhr-puppeteer": "^2.3.3",
     "puppeteer": "^9.0.0",
     "request": "^2.88.2",
     "string-random": "^0.1.3",
