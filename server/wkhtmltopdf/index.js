@@ -26,7 +26,7 @@ const execCommand = async function (commandFile, commandArgs, timeout) {
             }
 
             if (err) {
-                reject();
+                reject("" + err);
             } else {
                 resolve();
             }
