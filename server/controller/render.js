@@ -30,7 +30,7 @@ const processPdfMeta = function (req,res,pdfPathInfo) {
 };
 
 const renderPdf = function (req, res, next) {
-    req.body.timeout = req.body.timeout || 120000;
+    req.body.timeout = ~~req.body.timeout || 120000;
     res.setTimeout(req.body.timeout, function () {
         res.send(helper.failMsg("timeout"))
     });
