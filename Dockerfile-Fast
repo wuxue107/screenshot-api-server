@@ -4,7 +4,7 @@ MAINTAINER 575065955@qq.com
 COPY latest.tar /
 
 RUN \
-    tar -xvf latest.tar && rm -rf latest.tar
+    tar -xvf latest.tar && rm -rf latest.tar && chmod 777 /screenshot-api-server/*.sh
 
 EXPOSE 3000
 
