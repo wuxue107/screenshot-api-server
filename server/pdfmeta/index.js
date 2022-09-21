@@ -22,7 +22,10 @@ const setPdfMetaInfo = function(pdfFile,metaInfoUpdate){
         })
         .then(() => exiftool.close())
         .then(() => {
-            require('fs').unlink(pdfFile + "_original")
+            setTimeout(function () {
+                require('fs').unlink(pdfFile + "_original",function(){
+                })
+            },50);
         });
 };
 
