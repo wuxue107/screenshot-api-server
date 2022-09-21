@@ -20,7 +20,10 @@ const setPdfMetaInfo = function(pdfFile,metaInfoUpdate){
         .then(function () {
             return exiftool.writeMetadata(pdfFile, metaInfo);
         })
-        .then(() => exiftool.close());
+        .then(() => exiftool.close())
+        .then(() => {
+            require('fs').unlink(pdfFile + "_original")
+        });
 };
 
 module.exports = {
