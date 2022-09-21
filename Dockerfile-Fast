@@ -1,10 +1,10 @@
-FROM wuxue107/screenshot-api-server-fast-base:1.0.0
+FROM wuxue107/screenshot-api-server-fast-base:1.1.0
 MAINTAINER 575065955@qq.com
 
 COPY latest.tar /
 
 RUN \
-    tar -xvf latest.tar && rm -rf latest.tar && chmod 777 /screenshot-api-server/*.sh
+    tar -xvf latest.tar && rm -rf latest.tar && rm -rf public && mkdir -p public && chmod 777 /screenshot-api-server/*.sh
 
 EXPOSE 3000
 

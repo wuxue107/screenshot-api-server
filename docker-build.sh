@@ -15,7 +15,16 @@ if [ "$1" == "" ]; then
     docker tag wuxue107/screenshot-api-server:${IMAGE_VERSION} wuxue107/screenshot-api-server:latest
 fi
 
-if "%1" == "fast" (
+
+if [ "$1" == "fastbase" ]; then
+    git archive --format=tar --worktree-attributes --prefix=screenshot-api-server/ -o latest.tar HEAD
+    
+    docker rmi wuxue107/screenshot-api-server-fast-base:1.1.0
+    docker build -f Dockerfile-FastBase -t wuxue107/screenshot-api-server-fast-base:1.1.0 .
+    del /f latest.tar
+fi 
+  
+if [ "$1" == "fast" ]; then
     git archive --format=tar --worktree-attributes --prefix=screenshot-api-server/ -o latest.tar HEAD
     
     docker rmi wuxue107/screenshot-api-server:${IMAGE_VERSION}
@@ -24,7 +33,7 @@ if "%1" == "fast" (
     
     docker rmi wuxue107/screenshot-api-server:latest
     docker tag wuxue107/screenshot-api-server:${IMAGE_VERSION} wuxue107/screenshot-api-server:latest
-)
+fi 
 
 if [ "$1" == "full" ]; then
     git archive --format=tar --worktree-attributes --prefix=screenshot-api-server/ -o latest.tar HEAD
