@@ -1,0 +1,13 @@
+FROM wuxue107/screenshot-api-server-fast-base:1.0.0
+MAINTAINER 575065955@qq.com
+
+COPY latest.tar /
+
+RUN \
+    tar -xvf latest.tar && rm -rf latest.tar
+
+EXPOSE 3000
+
+VOLUME /screenshot-api-server/public
+
+ENTRYPOINT /screenshot-api-server/run.sh

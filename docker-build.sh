@@ -3,14 +3,28 @@
 SCRIPT_PATH=$(cd `dirname "$0"`;pwd)
 cd "${SCRIPT_PATH}";
 
-DOCKER_IMAGE_VERSION=$(env node --eval="console.log(require('./package.json').version)")
+IMAGE_VERSION=$(env node --eval="console.log(require('./package.json').version)")
 
 if [ "$1" == "" ]; then
-  git archive --format=tar --worktree-attributes --prefix=screenshot-api-server/ -o latest.tar HEAD
-  docker rmi wuxue107/screenshot-api-server:${DOCKER_IMAGE_VERSION}
-  docker build -f Dockerfile -t wuxue107/screenshot-api-server:${DOCKER_IMAGE_VERSION} .
-  rm -rf latest.tar
+    git archive --format=tar --worktree-attributes --prefix=screenshot-api-server/ -o latest.tar HEAD
+    docker rmi wuxue107/screenshot-api-server:${IMAGE_VERSION}
+    docker build -f Dockerfile -t wuxue107/screenshot-api-server:${IMAGE_VERSION} .
+    rm -rf latest.tar
+
+    docker rmi wuxue107/screenshot-api-server:latest
+    docker tag wuxue107/screenshot-api-server:${IMAGE_VERSION} wuxue107/screenshot-api-server:latest
 fi
+
+if "%1" == "fast" (
+    git archive --format=tar --worktree-attributes --prefix=screenshot-api-server/ -o latest.tar HEAD
+    
+    docker rmi wuxue107/screenshot-api-server:${IMAGE_VERSION}
+    docker build -f Dockerfile-Fast -t wuxue107/screenshot-api-server:${IMAGE_VERSION} .
+    del /f latest.tar
+    
+    docker rmi wuxue107/screenshot-api-server:latest
+    docker tag wuxue107/screenshot-api-server:${IMAGE_VERSION} wuxue107/screenshot-api-server:latest
+)
 
 if [ "$1" == "full" ]; then
     git archive --format=tar --worktree-attributes --prefix=screenshot-api-server/ -o latest.tar HEAD
