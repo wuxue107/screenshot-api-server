@@ -16,6 +16,11 @@ const processPdfMeta = function (req,res,pdfPathInfo) {
             res.send(helper.failMsg("make pdf file failed:" + err));
             return;
         }
+        
+        if(req.body.ignoreMeta){
+            res.send(helper.successMsg({file: pdfPathInfo.relatePath}));
+            return;
+        }
 
         let metaInfo = typeof req.body.metaInfo == 'object' ? req.body.metaInfo : {};
 
