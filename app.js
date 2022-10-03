@@ -25,7 +25,7 @@ app.all('*', (req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Headers", "*");
     res.setHeader("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
-    if (req.method.toLowerCase() == 'options') {
+    if (req.method.toLowerCase() === 'options') {
         res.sendStatus(200);  // 让options尝试请求快速结束
     } else {
         next();
