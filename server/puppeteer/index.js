@@ -295,12 +295,21 @@ const getPage = async function(doFunc,timeout){
                 clearTimeout(timeoutId);
                 if(page){
                     helper.log("close page:" + page.url());
-                    page.close();
+                    try{
+                        page.close();
+                    }catch (e) {
+                        helper.error("close page err:" + e);
+                    }
                     page = null;
                 }
                 
                 if(browser){
-                    browserPool.release(browser);
+                    try{
+                        browserPool.release(browser);
+                    }catch (e) {
+                        helper.error("close browser err:" + e);
+                    }
+
                     browser = null;
                 }
             };

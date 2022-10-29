@@ -8,7 +8,7 @@
 ```bash
 docker pull wuxue107/screenshot-api-server
 
-## -e MAX_BROWSER=[num] 环境变量可选，最大的puppeteer实例数，忽略选项则默认值： [可用内存]/200M
+## -e MAX_BROWSER=[num] 环境变量可选，最大的puppeteer实例数，忽略选项则默认值:1 , 值auto：[可用内存]/200M
 ##  -e PDF_KEEP_DAY=[num] 自动删除num天之前产生的文件目录,默认0: 不删除文件
 docker run -p 3000:3000 -td --rm -e MAX_BROWSER=1 -e PDF_KEEP_DAY=0 -v ${PWD}:/screenshot-api-server/public --name=screenshot-api-server wuxue107/screenshot-api-server
 ```
