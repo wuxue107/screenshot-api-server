@@ -292,7 +292,11 @@ const getPage = async function(doFunc,timeout){
             },timeout + 25);
             
             closeCurrentPage = function () {
-                clearTimeout(timeoutId);
+                if(timeoutId){
+                    clearTimeout(timeoutId);
+                    timeoutId = 0;
+                }
+
                 if(page){
                     helper.log("close page:" + page.url());
                     try{
