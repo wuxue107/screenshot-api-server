@@ -77,17 +77,24 @@ let helper = {
     },
     
     makePdfFileInfo : function(){
-        let pdfFileName = stringRandom(20, { numbers: false }) + '.pdf';
+        return helper.makeFileInfo('pdf','.pdf')
+    },
+
+    makeHtmlFileInfo : function(){
+        return helper.makeFileInfo('html','.html')
+    },
+
+    makeFileInfo : function(subDir,suffix){
+        let pdfFileName = stringRandom(20, { numbers: false }) + suffix;
 
         let date = moment(Date.now()).format('YYYY-MM-DD');
-        let relate = 'pdf/' + date;
+        let relate = subDir + '/' + date;
         let pdfDailyPath =  helper.getPublicPath(relate);
         if(!require('fs').existsSync(pdfDailyPath)){
             require('fs').mkdirSync(pdfDailyPath,{recursive:true})
         }
 
         return  {
-            pdfDailyPath : pdfDailyPath,
             fullPath : pdfDailyPath + '/' + pdfFileName,
             relatePath : relate + '/' + pdfFileName,
         };
