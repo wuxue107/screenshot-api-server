@@ -5,6 +5,7 @@ const _ = require('lodash');
 const pdfMeta = require('../pdfmeta');
 const fs =require('fs');
 const urlencode = require('urlencode');
+const pdfTool = require('../pdftool');
 
 // 定时删除PDF文件任务
 require('../cron/pdfclean');
@@ -294,6 +295,43 @@ const renderWkHtmlToPdfBook = function (req, res, next) {
     renderWkHtmlToPdf(req,res,next);
 };
 
+const renderPdfProcess = function(req, res, next){
+    let options =  req.body.options || {};
+    let timeout =  req.body.timeout;
+
+    let pdfPathInfo = helper.makePdfFileInfo();
+    options.output = pdfPathInfo.fullPath;
+
+    if(!(options.pdf instanceof Array)){
+        res.send(helper.failMsg("options.pdf is required , must a array(string)"));
+        return;
+    }
+
+    let pdfFiles = [];
+    for (let i =0;i<options.pdf.length;i++){
+        let relatePath = options.pdf[i];
+        if(typeof relatePath !== 'string'){
+            res.send(helper.failMsg("options.pdf["+i+"] is must a string, relate path"));
+            return;
+        }
+        if(relatePath.includes('..') || /[^\w.\-\/]/.test(relatePath)){
+            res.send(helper.failMsg("options.pdf["+i+"] is unsafe relate path"));
+            return;
+        }
+
+
+        pdfFiles.push(helper.getPublicPath(relatePath));
+    }
+
+    options.pdf = pdfFiles;
+
+    pdfTool.process(options,timeout).then(function(){
+        res.send(helper.successMsg({file: pdfPathInfo.relatePath}));
+    }).catch(function (e) {
+        res.send(helper.failMsg("fail:" + e.toString()));
+    });
+};
+
 module.exports = {
     renderPdf,
     renderImage,
@@ -304,5 +342,5 @@ module.exports = {
     renderBookPage,
     renderWkHtmlToPdfBook,
     renderWkHtmlToPdf,
-
+    renderPdfProcess,
 };

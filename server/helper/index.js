@@ -2,6 +2,7 @@ const moment = require('moment');
 const NodeCache = require( "node-cache" );
 const stringRandom = require('string-random');
 const pathModule = require('path');
+
 let helper = {
     apiMsg : function(code ,msg , data){
         if (code === undefined) code = 0;
@@ -98,7 +99,7 @@ let helper = {
             fullPath : pdfDailyPath + '/' + pdfFileName,
             relatePath : relate + '/' + pdfFileName,
         };
-    }
+    },
 };
 
 helper.cache = new NodeCache({ stdTTL: 100 });
