@@ -21,8 +21,8 @@ if "%1" == "" (
 if "%1" == "fastbase" (
     git archive --format=tar --worktree-attributes --prefix=screenshot-api-server/ -o latest.tar HEAD
     
-    docker rmi wuxue107/screenshot-api-server-fast-base:1.1.0
-    docker build -f Dockerfile-FastBase -t wuxue107/screenshot-api-server-fast-base:1.1.0 .
+    docker rmi wuxue107/screenshot-api-server-fast-base:1.1.1
+    docker build -f Dockerfile-FastBase -t wuxue107/screenshot-api-server-fast-base:1.1.1 .
     del /f latest.tar
 )
 
