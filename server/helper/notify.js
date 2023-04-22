@@ -8,6 +8,7 @@ const Notify = function (req, res) {
     this.res = res;
     this.notifyUrl = req.body.notifyUrl;
     if(this.notifyUrl){
+        console.log("set notify url:" + this.notifyUrl);
         res.send(helper.successMsg());
     }
 };
@@ -18,6 +19,7 @@ Notify.prototype.isAsync = function(){
 
 Notify.prototype.send = function (data) {
     if(this.notifyUrl){
+        console.log("send notify to:" + this.notifyUrl);
         request({
             url: this.notifyUrl,
             method: "POST",
@@ -27,8 +29,11 @@ Notify.prototype.send = function (data) {
             },
             body: JSON.stringify(data)
         }, function(error, response, body) {
-            if (!error && response.statusCode == 200) {
-                console.log(body) // 请求成功的处理逻辑
+            if(error){
+                console.error(error)
+            }else{
+                console.info("resonse code:" + response.statusCode);
+                console.info("resonse msg:" + body);
             }
         });
     }else{
