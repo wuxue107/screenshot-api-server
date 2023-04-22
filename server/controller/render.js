@@ -6,7 +6,7 @@ const pdfMeta = require('../pdfmeta');
 const fs =require('fs');
 const urlencode = require('urlencode');
 const pdfTool = require('../pdftool');
-
+const Notify = require('../helper/notify')
 // 定时删除PDF文件任务
 require('../cron/pdfclean');
 
@@ -36,9 +36,11 @@ const processPdfMeta = function (req,res,pdfPathInfo) {
 };
 
 const renderPdf = function (req, res, next) {
+    let notify = new Notify(req,res);
     req.body.timeout = ~~req.body.timeout || 120000;
+
     res.setTimeout(req.body.timeout, function () {
-        res.send(helper.failMsg("timeout"))
+        notify.send(helper.failMsg("timeout"))
     });
 
     let postParam = req.body;
@@ -52,13 +54,13 @@ const renderPdf = function (req, res, next) {
         checkPageCompleteJs: postParam.checkPageCompleteJs,
     },  async function (page) {
         await browserHelper.renderPdf(page, pdfPathInfo.fullPath);
-        processPdfMeta(req,res,pdfPathInfo);
+        processPdfMeta(req,notify,pdfPathInfo);
     }).catch(function (e) {
         let errorMsg = e.toString();
         if (/ERR_CONNECTION_REFUSED/.test(errorMsg)) {
             errorMsg = "PDF生成服务器无法访问到页面的URL"
         }
-        res.send(helper.failMsg("fail:" + errorMsg));
+        notify.send(helper.failMsg("fail:" + errorMsg));
     });
 };
 
@@ -76,6 +78,8 @@ const renderBook = function (req, res, next) {
  * @param next
  */
 const renderImage = function (req, res, next) {
+    let notify = new Notify(req,res);
+
     let postParam = req.body;
     let element = (postParam.element || 'body') + '';
     browserHelper.loadPage({
@@ -89,13 +93,13 @@ const renderImage = function (req, res, next) {
     }, async function (page) {
         let imageData = await browserHelper.screenshotDOMElement(page, element);
         if (imageData) {
-            res.send(helper.successMsg({image: 'data:image/png;base64,' + imageData}))
+            notify.send(helper.successMsg({image: 'data:image/png;base64,' + imageData}))
         } else {
-            res.send(helper.failMsg("render fail"));
+            notify.send(helper.failMsg("render fail"));
         }
     }).catch(function (e) {
         console.error(e.toString());
-        res.send(helper.failMsg("fail:" + e.toString()));
+        notify.send(helper.failMsg("fail:" + e.toString()));
     });
 };
 
@@ -109,6 +113,8 @@ const renderImage = function (req, res, next) {
 const renderImages = function (req, res, next) {
     let postParam = req.body;
     let elements = postParam.elements || [];
+
+    let notify = new Notify(req,res);
     browserHelper.loadPage({
         pageUrl: postParam.pageUrl,
         html: postParam.html,
@@ -120,13 +126,13 @@ const renderImages = function (req, res, next) {
     }, async function (page) {
         let images = await browserHelper.screenshotDOMElements(page, elements);
         if (images) {
-            res.send(helper.successMsg({images: images}))
+            notify.send(helper.successMsg({images: images}))
         } else {
-            res.send(helper.failMsg("render fail"));
+            notify.send(helper.failMsg("render fail"));
         }
     }).catch(function (e) {
         console.error(e.toString());
-        res.send(helper.failMsg("fail:" + e.toString()));
+        notify.send(helper.failMsg("fail:" + e.toString()));
     });
 };
 
@@ -275,11 +281,13 @@ const renderWkHtmlToPdf = function (req, res, next) {
             pageHeight : ~~req.pageHeight,
         }
     }
+
+    let notify = new Notify(req,res);
     let pdfPathInfo = helper.makePdfFileInfo();
     wkHtmlToPdfHelper.wkHtmlToPdf(postParam.pageUrl, pdfPathInfo.fullPath, postParam.pageSize, postParam.orientation, postParam.delay, postParam.timeout,postParam.windowStatus).then(function () {
-        processPdfMeta(req,res,pdfPathInfo);
+        processPdfMeta(req,notify,pdfPathInfo);
     }).catch(function (e) {
-        res.send(helper.failMsg("fail:" + e.toString()));
+        notify.send(helper.failMsg("fail:" + e.toString()));
     });
 };
 
@@ -299,8 +307,6 @@ const renderPdfProcess = function(req, res, next){
     let options =  req.body.options || {};
     let timeout =  req.body.timeout;
 
-    let pdfPathInfo = helper.makePdfFileInfo();
-    options.output = pdfPathInfo.fullPath;
 
     if(!(options.pdf instanceof Array)){
         res.send(helper.failMsg("options.pdf is required , must a array(string)"));
@@ -324,11 +330,14 @@ const renderPdfProcess = function(req, res, next){
     }
 
     options.pdf = pdfFiles;
+    let pdfPathInfo = helper.makePdfFileInfo();
+    options.output = pdfPathInfo.fullPath;
 
+    let notify = new Notify(req,res);
     pdfTool.process(options,timeout).then(function(){
-        res.send(helper.successMsg({file: pdfPathInfo.relatePath}));
+        notify.send(helper.successMsg({file: pdfPathInfo.relatePath}));
     }).catch(function (e) {
-        res.send(helper.failMsg("fail:" + e.toString()));
+        notify.send(helper.failMsg("fail:" + e.toString()));
     });
 };
 
