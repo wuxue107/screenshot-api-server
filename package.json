@@ -13,6 +13,7 @@
     "express": "~4.16.1",
     "express-art-template": "^1.0.1",
     "generic-pool": "^3.7.1",
+    "joi": "^17.9.2",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
     "morgan": "~1.9.1",

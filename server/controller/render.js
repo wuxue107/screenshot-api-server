@@ -1,7 +1,7 @@
 let helper = require('../helper/index');
 let browserHelper = require('../puppeteer/index');
 let wkHtmlToPdfHelper = require('../wkhtmltopdf/index');
-const _ = require('lodash');
+const Lodash = require('lodash');
 const pdfMeta = require('../pdfmeta');
 const fs =require('fs');
 const urlencode = require('urlencode');
@@ -17,7 +17,7 @@ const processPdfMeta = function (req,res,pdfPathInfo) {
             res.send(helper.failMsg("make pdf file failed:" + err));
             return;
         }
-        
+
         if(req.body.ignoreMeta){
             res.send(helper.successMsg({file: pdfPathInfo.relatePath}));
             return;
@@ -26,6 +26,32 @@ const processPdfMeta = function (req,res,pdfPathInfo) {
         let metaInfo = typeof req.body.metaInfo == 'object' ? req.body.metaInfo : {};
 
         pdfMeta.setPdfMetaInfo(pdfPathInfo.fullPath, metaInfo).then(()=>{
+            helper.info("process pdf meta complete:" + pdfPathInfo.relatePath);
+            res.send(helper.successMsg({file: pdfPathInfo.relatePath}));
+        }).catch(function (err) {
+            helper.error("send pdf metainfo failed:" + pdfPathInfo.relatePath + "," + err);
+            res.send(helper.failMsg("send pdf metainfo failed:" + pdfPathInfo.relatePath + "," + err));
+        });
+    });
+};
+
+const processPdfMeta2 = function (req,res,pdfPathInfo,bookJsMetaInfo) {
+    helper.info("process pdf meta:" + pdfPathInfo.relatePath);
+    return fs.access(pdfPathInfo.fullPath, fs.constants.R_OK, function (err) {
+        if (err) {
+            res.send(helper.failMsg("make pdf file failed:" + err));
+            return;
+        }
+
+        if(req.body.ignoreMeta){
+            res.send(helper.successMsg({file: pdfPathInfo.relatePath}));
+            return;
+        }
+
+        let apiBookJsMetaInfo = typeof req.body.metaInfo == 'object' ? req.body.metaInfo : {};
+
+
+        pdfMeta.setPdfMetaInfo2(pdfPathInfo.fullPath, Lodash.extend({},bookJsMetaInfo,apiBookJsMetaInfo)).then(()=>{
             helper.info("process pdf meta complete:" + pdfPathInfo.relatePath);
             res.send(helper.successMsg({file: pdfPathInfo.relatePath}));
         }).catch(function (err) {
@@ -53,8 +79,10 @@ const renderPdf = function (req, res, next) {
         delay: ~~postParam.delay,
         checkPageCompleteJs: postParam.checkPageCompleteJs,
     },  async function (page) {
+
+        let bookJsMetaInfo = await page.evaluate("window.bookJsMetaInfo");
         await browserHelper.renderPdf(page, pdfPathInfo.fullPath);
-        processPdfMeta(req,notify,pdfPathInfo);
+        processPdfMeta2(req,notify,pdfPathInfo,bookJsMetaInfo);
     }).catch(function (e) {
         let errorMsg = e.toString();
         if (/ERR_CONNECTION_REFUSED/.test(errorMsg)) {
@@ -188,7 +216,7 @@ const downloadPdf = function (req, res, next) {
  * @returns {string}
  */
 const makeBookTplHtml = function (req, res, next) {
-    if (!_.isObject(req.body.bookConfig)) {
+    if (!Lodash.isObject(req.body.bookConfig)) {
         req.body.bookConfig = {};
     }
 
@@ -197,7 +225,7 @@ const makeBookTplHtml = function (req, res, next) {
     let bookTpl = req.body.bookTpl || '<div>内容为空</div>';
     let contentBox = '<div>' + bookTpl + '</div>';
     let baseUrl = 'http://127.0.0.1:' + (process.env.PORT || '3000') + '/';
-    let bookConfig = _.extend({
+    let bookConfig = Lodash.extend({
         pageSize: 'ISO_A4',
         orientation: 'portrait',// landscape
         padding: "20mm 10mm 20mm 10mm",
@@ -324,7 +352,6 @@ const renderPdfProcess = function(req, res, next){
             res.send(helper.failMsg("options.pdf["+i+"] is unsafe relate path"));
             return;
         }
-
 
         pdfFiles.push(helper.getPublicPath(relatePath));
     }
