@@ -77,6 +77,7 @@ let PdfTool = {
 
         let commandArgs = commandOptionsToArgs(option);
         commandArgs.unshift('-jar', helper.getRootPath('bin/pdf-tool.jar'));
+
         return command.execCommand('java',commandArgs,timeout)
     }
 };

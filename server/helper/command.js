@@ -7,9 +7,7 @@ let execCommand = async function (commandFile, commandArgs, timeout) {
     let index = await commandPool.acquire();
     let subProcess;
     return new Promise(function (resolve, reject) {
-        helper.info("[" + index + "]: run command:");
-        helper.info(commandFile);
-        helper.info(commandArgs);
+        helper.info("[" + index + "]: run command:'" + commandFile + "', with args:" + JSON.stringify(commandArgs));
 
 
         subProcess = execFile(commandFile, commandArgs, {

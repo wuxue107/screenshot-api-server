@@ -31,10 +31,32 @@ const setPdfMetaInfo = function (pdfFile, metaInfoUpdate, outlineTree) {
         });
 };
 
+const buildOutlineOption = function(subItems,option,level){
+    for(let k in subItems){
+        let subItem = subItems[k];
+        if(subItem.linkId){
+            option.bookmarkItem.push(level + " " + subItem.linkId + " " + subItem.title);
+        }else{
+            option.bookmarkItem.push(level + " " + (~~subItem.pageIndex) + " " + (subItem.top??0) + " " + (subItem.left??0) + (subItem.zoom?(" " + subItem.zoom):"") + " " + subItem.title);
+        }
+
+        if(subItem.items){
+            buildOutlineOption(subItem.items,option,level+1)
+        }
+    }
+};
+
 const setPdfMetaInfo2 = function (pdfFile, metaInfoUpdate, apiBookJsMetaInfo) {
-    let option = apiBookJsMetaInfo.option;
+    let option = apiBookJsMetaInfo.information;
     option.pdf = [pdfFile];
     option.output = pdfFile;
+
+    let outline = apiBookJsMetaInfo.outline;
+    if(outline && outline.items){
+        option.bookmarkItem = [];
+        buildOutlineOption(option,outline.items,1);
+    }
+
     return pdfTool.process(option);
 };
 
