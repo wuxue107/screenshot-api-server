@@ -2,7 +2,7 @@ const nodeExiftool = require('node-exiftool');
 const pdfTool = require('../pdftool');
 const Lodash = require('lodash');
 
-const setPdfMetaInfo = function (pdfFile, metaInfoUpdate, outlineTree) {
+const setPdfMetaInfo = function (pdfFile, metaInfoUpdate) {
     let exiftool = new nodeExiftool.ExiftoolProcess(require('dist-exiftool'));
     let metaInfo = {
         Creator: 'screenshot-api-server',
@@ -31,30 +31,31 @@ const setPdfMetaInfo = function (pdfFile, metaInfoUpdate, outlineTree) {
         });
 };
 
-const buildOutlineOption = function(subItems,option,level){
+const buildOutlineOption = function(bookmarkItemOptions,subItems,level){
     for(let k in subItems){
         let subItem = subItems[k];
         if(subItem.linkId){
-            option.bookmarkItem.push(level + " " + subItem.linkId + " " + subItem.title);
+            bookmarkItemOptions.push(level + " " + subItem.linkId + " " + subItem.title);
         }else{
-            option.bookmarkItem.push(level + " " + (~~subItem.pageIndex) + " " + (subItem.top??0) + " " + (subItem.left??0) + (subItem.zoom?(" " + subItem.zoom):"") + " " + subItem.title);
+            bookmarkItemOptions.push(level + " " + (~~subItem.pageIndex) + " " + (subItem.top??0) + " " + (subItem.left??0) + (subItem.zoom?(" " + subItem.zoom):"") + " " + subItem.title);
         }
 
         if(subItem.items){
-            buildOutlineOption(subItem.items,option,level+1)
+            buildOutlineOption(bookmarkItemOptions,subItem.items,level+1)
         }
     }
 };
 
-const setPdfMetaInfo2 = function (pdfFile, metaInfoUpdate, apiBookJsMetaInfo) {
+const setPdfMetaInfo2 = function (pdfFile, apiBookJsMetaInfo) {
     let option = apiBookJsMetaInfo.information;
     option.pdf = [pdfFile];
     option.output = pdfFile;
 
     let outline = apiBookJsMetaInfo.outline;
     if(outline && outline.items){
-        option.bookmarkItem = [];
-        buildOutlineOption(option,outline.items,1);
+        let bookmarkItemOptions = [];
+        buildOutlineOption(bookmarkItemOptions,outline.items,1);
+        option.bookmarkItem = bookmarkItemOptions;
     }
 
     return pdfTool.process(option);

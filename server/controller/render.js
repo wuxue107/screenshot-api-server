@@ -29,7 +29,7 @@ const processPdfMeta = function (req,res,pdfPathInfo) {
             helper.info("process pdf meta complete:" + pdfPathInfo.relatePath);
             res.send(helper.successMsg({file: pdfPathInfo.relatePath}));
         }).catch(function (err) {
-            helper.error("send pdf metainfo failed:" + pdfPathInfo.relatePath + "," + err);
+            helper.error("process pdf metainfo failed:" + pdfPathInfo.relatePath + "," + err);
             res.send(helper.failMsg("send pdf metainfo failed:" + pdfPathInfo.relatePath + "," + err));
         });
     });
@@ -48,10 +48,7 @@ const processPdfMeta2 = function (req,res,pdfPathInfo,bookJsMetaInfo) {
             return;
         }
 
-        let apiBookJsMetaInfo = typeof req.body.metaInfo == 'object' ? req.body.metaInfo : {};
-
-
-        pdfMeta.setPdfMetaInfo2(pdfPathInfo.fullPath, Lodash.extend({},bookJsMetaInfo,apiBookJsMetaInfo)).then(()=>{
+        pdfMeta.setPdfMetaInfo2(pdfPathInfo.fullPath, bookJsMetaInfo).then(()=>{
             helper.info("process pdf meta complete:" + pdfPathInfo.relatePath);
             res.send(helper.successMsg({file: pdfPathInfo.relatePath}));
         }).catch(function (err) {
@@ -80,8 +77,18 @@ const renderPdf = function (req, res, next) {
         checkPageCompleteJs: postParam.checkPageCompleteJs,
     },  async function (page) {
 
-        let bookJsMetaInfo = await page.evaluate("window.bookJsMetaInfo");
+        let bookJsMetaInfo = {};
+        if(typeof req.body.metaInfo == 'object'){
+            bookJsMetaInfo = req.body.metaInfo;
+        }else{
+            let ret = await page.evaluate("window.bookJsMetaInfo");
+            if(typeof ret == 'object'){
+                bookJsMetaInfo = ret;
+            }
+        }
+
         await browserHelper.renderPdf(page, pdfPathInfo.fullPath);
+
         processPdfMeta2(req,notify,pdfPathInfo,bookJsMetaInfo);
     }).catch(function (e) {
         let errorMsg = e.toString();
