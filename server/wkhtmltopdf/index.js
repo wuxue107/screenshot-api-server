@@ -21,6 +21,8 @@ const commandOptionsToArgs = function(option){
     return commandArgs;
 };
 const wkHtmlToPdf = function (url, pdfFile, pageSize, orientation, delay, timeout, checkWindowStatus) {
+    helper.info("wkhtmltopdf: start make pdf, url:" + (url.substr(0,4)==='http' ? url : (url.substr(0,50) + '...')));
+
     orientation = (orientation + "").toLowerCase();
     orientation = orientation === "landscape" ? "Landscape" : "Portrait";
     timeout = ~~(timeout || 30000);
@@ -81,7 +83,9 @@ const wkHtmlToPdf = function (url, pdfFile, pageSize, orientation, delay, timeou
     
     let commandArgs = commandOptionsToArgs(commandOptions);
     commandArgs.push(url, pdfFile);
-    return command.execCommand("wkhtmltopdf", commandArgs, timeout);
+    let ret = command.execCommand("wkhtmltopdf", commandArgs, timeout);
+    helper.info("wkhtmltopdf: end make pdf");
+    return ret;
 };
 
 const wkHtmlToPdfBook = function (url, pdfFile, pageSize, orientation, delay, timeout) {

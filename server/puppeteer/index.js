@@ -234,6 +234,7 @@ const screenshotDOMElements = async function(page, selectors,encoding,type) {
  * @returns {Promise<*|Buffer>}
  */
 const renderPdf = async function(page,saveFile){
+    helper.info("puppeteer: start make pdf, url:" + page.url());
     let option = {
         //landscape : false,
         displayHeaderFooter: false,
@@ -268,8 +269,10 @@ const renderPdf = async function(page,saveFile){
         option.path = saveFile;
         helper.log("save pdf file:" + saveFile);
     }
-    
-    return await page.pdf(option);
+
+    let ret = await page.pdf(option);
+    helper.info("puppeteer: end make pdf");
+    return ret;
 };
 
 /**
