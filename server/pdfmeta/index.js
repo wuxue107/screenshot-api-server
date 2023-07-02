@@ -5,8 +5,8 @@ const Lodash = require('lodash');
 const setPdfMetaInfo = function (pdfFile, metaInfoUpdate) {
     let exiftool = new nodeExiftool.ExiftoolProcess(require('dist-exiftool'));
     let metaInfo = {
-        Creator: 'screenshot-api-server',
-        Producer: 'bookjs-eazy',
+        Creator: 'bookjs-eazy',
+        Producer: 'screenshot-api-server',
     };
     if (typeof metaInfoUpdate.Author === 'string') {
         metaInfo.Author = metaInfoUpdate.Author;
