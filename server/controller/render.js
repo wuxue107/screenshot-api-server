@@ -32,7 +32,6 @@ const processPdfMeta = function (req,res,pdfPathInfo,bookJsMetaInfo){
 const renderPdf = function (req, res, next) {
     let notify = new Notify(req,res);
     req.body.timeout = ~~req.body.timeout || 120000;
-
     res.setTimeout(req.body.timeout, function () {
         notify.send(helper.failMsg("timeout"))
     });
@@ -50,14 +49,16 @@ const renderPdf = function (req, res, next) {
 
 
         let bookJsMetaInfo = await normalizeMetaInfo(req,page);
-        await browserHelper.renderPdf(page, pdfPathInfo.fullPath);
+        await browserHelper.renderPdf(page, pdfPathInfo.fullPath,req.body.timeout);
 
         processPdfMeta(req,notify,pdfPathInfo,bookJsMetaInfo);
     }).catch(function (e) {
+        
         let errorMsg = e.toString();
         if (/ERR_CONNECTION_REFUSED/.test(errorMsg)) {
             errorMsg = "PDF生成服务器无法访问到页面的URL"
         }
+        helper.error("renderPdf:" + e);
         notify.send(helper.failMsg("fail:" + errorMsg));
     });
 };
@@ -96,7 +97,7 @@ const renderImage = function (req, res, next) {
             notify.send(helper.failMsg("render fail"));
         }
     }).catch(function (e) {
-        console.error(e.toString());
+        helper.error("renderImage:" + e);
         notify.send(helper.failMsg("fail:" + e.toString()));
     });
 };
@@ -129,7 +130,7 @@ const renderImages = function (req, res, next) {
             notify.send(helper.failMsg("render fail"));
         }
     }).catch(function (e) {
-        console.error(e.toString());
+        helper.error("renderImages:" + e);
         notify.send(helper.failMsg("fail:" + e.toString()));
     });
 };
@@ -342,6 +343,7 @@ const renderWkHtmlToPdf = function (req, res, next) {
             processPdfMeta(req,notify,pdfPathInfo,bookJsMetaInfo);
         })
     }).catch(function (e) {
+        helper.error("renderWkHtmlToPdf:" + e);
         notify.send(helper.failMsg("fail:" + e.toString()));
     });
 };

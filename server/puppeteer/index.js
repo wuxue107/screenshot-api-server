@@ -233,7 +233,7 @@ const screenshotDOMElements = async function(page, selectors,encoding,type) {
  * 
  * @returns {Promise<*|Buffer>}
  */
-const renderPdf = async function(page,saveFile){
+const renderPdf = async function(page,saveFile,timeout){
     helper.info("puppeteer: start make pdf, url:" + page.url());
     let option = {
         //landscape : false,
@@ -263,6 +263,7 @@ const renderPdf = async function(page,saveFile){
         preferCSSPageSize: true,
         // Allowed Values: ReturnAsBase64, ReturnAsStream
         transferMode : 'ReturnAsStream',
+        timeout: timeout
     };
 
     if(saveFile){
