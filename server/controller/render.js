@@ -9,8 +9,7 @@ const pdfTool = require('../pdftool');
 const Notify = require('../helper/notify')
 // 定时删除PDF文件任务
 require('../cron/pdfclean');
-
-const processPdfMeta = function (req,res,pdfPathInfo) {
+const processPdfMeta = function (req,res,pdfPathInfo,bookJsMetaInfo){
     helper.info("process pdf meta:" + pdfPathInfo.relatePath);
     return fs.access(pdfPathInfo.fullPath, fs.constants.R_OK, function (err) {
         if (err) {
@@ -18,37 +17,9 @@ const processPdfMeta = function (req,res,pdfPathInfo) {
             return;
         }
 
-        if(req.body.ignoreMeta){
-            res.send(helper.successMsg({file: pdfPathInfo.relatePath}));
-            return;
-        }
+        let ignoreMeta = ~~ req.body.ignoreMeta;
 
-        let metaInfo = typeof req.body.metaInfo == 'object' ? req.body.metaInfo : {};
-
-        pdfMeta.setPdfMetaInfo(pdfPathInfo.fullPath, metaInfo).then(()=>{
-            helper.info("process pdf meta complete:" + pdfPathInfo.relatePath);
-            res.send(helper.successMsg({file: pdfPathInfo.relatePath}));
-        }).catch(function (err) {
-            helper.error("process pdf metainfo failed:" + pdfPathInfo.relatePath + "," + err);
-            res.send(helper.failMsg("send pdf metainfo failed:" + pdfPathInfo.relatePath + "," + err));
-        });
-    });
-};
-
-const processPdfMeta2 = function (req,res,pdfPathInfo,bookJsMetaInfo) {
-    helper.info("process pdf meta:" + pdfPathInfo.relatePath);
-    return fs.access(pdfPathInfo.fullPath, fs.constants.R_OK, function (err) {
-        if (err) {
-            res.send(helper.failMsg("make pdf file failed:" + err));
-            return;
-        }
-
-        if(req.body.ignoreMeta){
-            res.send(helper.successMsg({file: pdfPathInfo.relatePath}));
-            return;
-        }
-
-        pdfMeta.setPdfMetaInfo2(pdfPathInfo.fullPath, bookJsMetaInfo).then(()=>{
+        pdfMeta.setPdfMetaInfo(pdfPathInfo.fullPath, bookJsMetaInfo,ignoreMeta).then(()=>{
             helper.info("process pdf meta complete:" + pdfPathInfo.relatePath);
             res.send(helper.successMsg({file: pdfPathInfo.relatePath}));
         }).catch(function (err) {
@@ -77,19 +48,11 @@ const renderPdf = function (req, res, next) {
         checkPageCompleteJs: postParam.checkPageCompleteJs,
     },  async function (page) {
 
-        let bookJsMetaInfo = {};
-        if(typeof req.body.metaInfo == 'object'){
-            bookJsMetaInfo = req.body.metaInfo;
-        }else{
-            let ret = await page.evaluate("window.bookJsMetaInfo");
-            if(typeof ret == 'object'){
-                bookJsMetaInfo = ret;
-            }
-        }
 
+        let bookJsMetaInfo = await normalizeMetaInfo(req,page);
         await browserHelper.renderPdf(page, pdfPathInfo.fullPath);
 
-        processPdfMeta2(req,notify,pdfPathInfo,bookJsMetaInfo);
+        processPdfMeta(req,notify,pdfPathInfo,bookJsMetaInfo);
     }).catch(function (e) {
         let errorMsg = e.toString();
         if (/ERR_CONNECTION_REFUSED/.test(errorMsg)) {
@@ -291,6 +254,61 @@ const renderBookPage = function (req, res, next) {
 
 
 
+const normalizeMetaInfo = async function (req,page) {
+    let bookJsMetaInfo = {};
+    if(page){
+        let ret = await page.evaluate("window.bookJsMetaInfo");
+        if(typeof ret == 'object'){
+            bookJsMetaInfo = ret;
+        }
+    }
+
+    if(typeof req.body.metaInfo == 'object'){
+        let metaInfo = req.body.metaInfo ;
+        let information = metaInfo.information || {};
+        
+        /** old version bookjs-eazy meta options **/
+        if (typeof metaInfo.Author === 'string') {
+            if(metaInfo.Author){
+                information.author = metaInfo.Author;
+            }
+
+            delete metaInfo.Author;
+        }
+        
+        if (typeof metaInfo.Subject === 'string') {
+            if(metaInfo.Subject){
+                information.subject = metaInfo.Subject;
+            }
+
+            delete metaInfo.Subject;
+        }
+        if (typeof metaInfo.Keywords === 'string') {
+            if(metaInfo.Keywords){
+                information.keywords = metaInfo.Keywords;
+            }
+            
+            delete metaInfo.Keywords;
+        }
+        delete metaInfo.title;
+        metaInfo.information = information;
+        
+        bookJsMetaInfo = metaInfo;
+    }
+    
+    if(Lodash.isEmpty(bookJsMetaInfo.information.subject)){
+        delete bookJsMetaInfo.information.subject;
+    }
+    if(Lodash.isEmpty(bookJsMetaInfo.information.keywords)){
+        delete bookJsMetaInfo.information.keywords;
+    }
+    if(Lodash.isEmpty(bookJsMetaInfo.information.author)){
+        delete bookJsMetaInfo.information.author;
+    }
+
+    return bookJsMetaInfo
+};
+
 /**
  * 使用wkhtmltopdf URL转PDF
  * 
@@ -316,11 +334,13 @@ const renderWkHtmlToPdf = function (req, res, next) {
             pageHeight : ~~req.pageHeight,
         }
     }
-
+    
     let notify = new Notify(req,res);
-    let pdfPathInfo = helper.makePdfFileInfo();
-    wkHtmlToPdfHelper.wkHtmlToPdf(postParam.pageUrl, pdfPathInfo.fullPath, postParam.pageSize, postParam.orientation, postParam.delay, postParam.timeout,postParam.windowStatus).then(function () {
-        processPdfMeta(req,notify,pdfPathInfo);
+    normalizeMetaInfo(req).then(function (bookJsMetaInfo) {
+        let pdfPathInfo = helper.makePdfFileInfo();
+        wkHtmlToPdfHelper.wkHtmlToPdf(postParam.pageUrl, pdfPathInfo.fullPath, postParam.pageSize, postParam.orientation, postParam.delay, postParam.timeout,postParam.windowStatus).then(function () {
+            processPdfMeta(req,notify,pdfPathInfo,bookJsMetaInfo);
+        })
     }).catch(function (e) {
         notify.send(helper.failMsg("fail:" + e.toString()));
     });

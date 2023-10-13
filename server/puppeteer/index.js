@@ -11,7 +11,7 @@ const createPuppeteerPool = function (opts) {
         create: function() {
             helper.info("start one puppeteer instance");
             return puppeteer.launch({
-                headless: true,
+                headless: "new",
                 dumpio: false,
                 ignoreHTTPSErrors: true,
                 defaultViewport: {
