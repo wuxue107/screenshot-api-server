@@ -2,6 +2,7 @@
 
 SCRIPT_PATH=$(cd `dirname "$0"`;pwd)
 cd "${SCRIPT_PATH}";
+BASE_IMAGE_VERSION=1.3.0
 
 IMAGE_VERSION=$(env node --eval="console.log(require('./package.json').version)")
 
@@ -19,11 +20,11 @@ fi
 if [ "$1" == "fastbase" ]; then
     git archive --format=tar --worktree-attributes --prefix=screenshot-api-server/ -o latest.tar HEAD
     
-    docker rmi wuxue107/screenshot-api-server-fast-base:1.1.0
-    docker build -f Dockerfile-FastBase -t wuxue107/screenshot-api-server-fast-base:1.1.0 .
+    docker rmi wuxue107/screenshot-api-server-fast-base:${BASE_IMAGE_VERSION}
+    docker build -f Dockerfile-FastBase -t wuxue107/screenshot-api-server-fast-base:${BASE_IMAGE_VERSION} .
     del /f latest.tar
 fi 
-  
+
 if [ "$1" == "fast" ]; then
     git archive --format=tar --worktree-attributes --prefix=screenshot-api-server/ -o latest.tar HEAD
     
@@ -45,7 +46,7 @@ fi
 
 if [ "$1" == "base" ]; then
     docker rmi wuxue107/screenshot-api-base:latest
-    docker  build -f Dockerfile-Base -t wuxue107/screenshot-api-base:latest .
+    docker  build -f Dockerfile-Base -t wuxue107/screenshot-api-base:${BASE_IMAGE_VERSION} .
 fi 
 
     
