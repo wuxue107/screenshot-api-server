@@ -21,8 +21,8 @@ if "%1" == "" (
 if "%1" == "fastbase" (
     git archive --format=tar --worktree-attributes --prefix=screenshot-api-server/ -o latest.tar HEAD
     
-    docker rmi wuxue107/screenshot-api-server-fast-base:1.1.1
-    docker build -f Dockerfile-FastBase -t wuxue107/screenshot-api-server-fast-base:1.1.1 .
+    docker rmi wuxue107/screenshot-api-server-fast-base:1.3.0
+    docker build -f Dockerfile-FastBase -t wuxue107/screenshot-api-server-fast-base:1.3.0 .
     del /f latest.tar
 )
 
@@ -39,7 +39,7 @@ if "%1" == "fast" (
 
 if "%1" == "base" (
     docker rmi wuxue107/screenshot-api-base:latest
-    docker  build -f Dockerfile-Base -t wuxue107/screenshot-api-base:1.1.1 .
+    docker  build -f Dockerfile-Base -t wuxue107/screenshot-api-base:1.3.0 .
 )
 
 if "%1" == "full" (
