@@ -1,6 +1,7 @@
 FROM wuxue107/screenshot-api-base:1.3.0
 MAINTAINER 575065955@qq.com
 
+ENV PUPPETEER_DOWNLOAD_HOST=https://npm.taobao.org/mirrors
 COPY latest.tar /
 
 RUN \
