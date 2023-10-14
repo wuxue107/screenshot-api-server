@@ -8,7 +8,9 @@ RUN \
       wget xfonts-intl-chinese ttf-wqy-microhei  xfonts-wqy fonts-arphic-ukai fonts-cwtex-fs fonts-symbola xfonts-intl-european xfonts-intl-japanese \
       fontconfig libfreetype6 libjpeg62-turbo libpng16-16 libx11-6 libxcb1 libxext6 libxrender1 xfonts-75dpi \
       xfonts-base libfontconfig1 fontconfig-config libx11-data libxau6 libxdmcp6 ucf fonts-dejavu-core libexpat1 libbsd0 xfonts-utils libfontenc1 x11-common \
-      xfonts-encodings sensible-utils default-jdk \
+      xfonts-encodings sensible-utils \
+      libatk1.0-dev libatk-bridge2.0-dev  libxcomposite-dev libxrandr2 libgbm1 libxkbcommon-dev libpango1.0-dev \
+      default-jdk \
     && wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.buster_amd64.deb \
     && (dpkg -i wkhtmltox_0.12.6-1.buster_amd64.deb; echo ignore wkhtmlx error) && apt --fix-broken -y install && rm -rf wkhtmltox_0.12.6-1.buster_amd64.deb \
     && npm config set registry https://registry.npm.taobao.org -g \
