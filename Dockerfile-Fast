@@ -3,8 +3,9 @@ MAINTAINER 575065955@qq.com
 
 COPY latest.tar /
 
+ENV PUPPETEER_DOWNLOAD_HOST https://npm.taobao.org/mirrors
 RUN \
-    tar -xvf latest.tar && rm -rf latest.tar  && cd /screenshot-api-server && yarn && rm -rf public && mkdir -p public && chmod 777 /screenshot-api-server/*.sh
+    tar -xvf latest.tar && rm -rf latest.tar  && cd /screenshot-api-server && yarn install && rm -rf public && mkdir -p public && chmod 777 /screenshot-api-server/*.sh
 
 EXPOSE 3000
 

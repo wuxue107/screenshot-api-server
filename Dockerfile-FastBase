@@ -4,7 +4,7 @@ MAINTAINER 575065955@qq.com
 COPY latest.tar /
 
 RUN \
-    tar -xvf latest.tar && rm -rf latest.tar && cd /screenshot-api-server && yarn \
+    tar -xvf latest.tar && rm -rf latest.tar && cd /screenshot-api-server && yarn install \
     && rm -rf `ls | egrep -v '(node_modules)'` \
     && yarn cache clean --force \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
