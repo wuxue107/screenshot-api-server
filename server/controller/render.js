@@ -256,16 +256,20 @@ const renderBookPage = function (req, res, next) {
 
 
 const normalizeMetaInfo = async function (req,page) {
-    let bookJsMetaInfo = {};
+    let bookJsMetaInfo = {
+        information: {}
+    };
+    
     if(page){
         let ret = await page.evaluate("window.bookJsMetaInfo");
-        if(typeof ret == 'object'){
+        if(ret !== null && ret !== undefined){
             bookJsMetaInfo = ret;
         }
     }
+    
 
-    if(typeof req.body.metaInfo == 'object'){
-        let metaInfo = req.body.metaInfo ;
+    if(Lodash.isPlainObject(req.body.metaInfo)){
+        let metaInfo = req.body.metaInfo;
         let information = metaInfo.information || {};
         
         /** old version bookjs-eazy meta options **/
