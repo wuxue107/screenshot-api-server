@@ -6,20 +6,20 @@ let request = require('request');
 const Notify = function (req, res) {
     this.req = req;
     this.res = res;
-    this.notifyUrl = req.body.notifyUrl;
-    if(this.notifyUrl){
-        console.log("set notify url:" + this.notifyUrl);
+    this.notifyUrl = this.req.body.notifyUrl;
+    if(this.isAsync()){
+        helper.info("set notify url:" + this.notifyUrl);
         res.send(helper.successMsg());
     }
 };
 
 Notify.prototype.isAsync = function(){
-    return !!this.notifyUrl;
+    return !! this.notifyUrl;
 };
 
 Notify.prototype.send = function (data) {
-    if(this.notifyUrl){
-        console.log("send notify to:" + this.notifyUrl);
+    if(this.isAsync()){
+        helper.info("send notify to:" + this.notifyUrl);
         request({
             url: this.notifyUrl,
             method: "POST",
@@ -30,10 +30,10 @@ Notify.prototype.send = function (data) {
             body: JSON.stringify(data)
         }, function(error, response, body) {
             if(error){
-                console.error(error)
+                helper.error(error)
             }else{
-                console.info("resonse code:" + response.statusCode);
-                console.info("resonse msg:" + body);
+                helper.info("resonse code:" + response.statusCode);
+                helper.info("resonse msg:" + body);
             }
         });
     }else{
