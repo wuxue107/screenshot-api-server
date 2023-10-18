@@ -14,15 +14,15 @@ let execCommand = async function (commandFile, commandArgs, timeout) {
             maxBuffer: 4 * 1024 * 1024,
             timeout: timeout
         }, function (err, stdout, stderr) {
-            helper.log("STDOUT:" + stdout);
+            helper.log("[" + index + "]:STDOUT:" + stdout);
             if (stderr) {
-                helper.log("ERROR:" + stderr);
+                helper.log("[" + index + "]:ERROR:" + stderr);
                 errorMsg += stderr;
             }
         });
         
         subProcess.on('exit',function (code, signals) {
-            helper.info("[" + index + "]: end command,code:" + code)
+            helper.info("[" + index + "]: end command,exit code:" + code)
             commandPool.release(index);
             if(code === 0){
                 resolve();
@@ -32,10 +32,10 @@ let execCommand = async function (commandFile, commandArgs, timeout) {
         });
         
         if(!subProcess.pid){
-            reject("can not run command: " + commandFile)
+            reject("[" + index + "]:can not run command: " + commandFile)
         }
 
-        helper.info("PID:" + subProcess.pid);
+        helper.info("[" + index + "]:PID:" + subProcess.pid);
     });
 };
 

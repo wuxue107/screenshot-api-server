@@ -2,6 +2,7 @@ const moment = require('moment');
 const NodeCache = require( "node-cache" );
 const stringRandom = require('string-random');
 const pathModule = require('path');
+const fs = require('fs');
 
 let helper = {
     apiMsg : function(code ,msg , data){
@@ -102,6 +103,19 @@ let helper = {
             relatePath : relate + '/' + pdfFileName,
         };
     },
+    
+    assertFileReadable : async function(filePath, error){
+        return await new Promise( function (resolve, reject) {
+            fs.access(filePath, fs.constants.R_OK, async function (err) {
+                if (err) {
+                    reject(error + ":" + err);
+                    return;
+                }
+                
+                resolve();
+            });
+        });
+    }
 };
 
 helper.cache = new NodeCache({ stdTTL: 100 });

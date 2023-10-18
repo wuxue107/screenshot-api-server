@@ -9,22 +9,16 @@ const pdfTool = require('../pdftool');
 const Notify = require('../helper/notify')
 // 定时删除PDF文件任务
 require('../cron/pdfclean');
-const processPdfMeta = async function (req,res,pdfPathInfo,bookJsMetaInfo,ignoreMeta){
-    helper.info("process pdf meta:" + pdfPathInfo.relatePath);
-    return await new Promise( function (resolve, reject) {
-        fs.access(pdfPathInfo.fullPath, fs.constants.R_OK, async function (err) {
-            if (err) {
-                reject("make pdf file failed:" + err);
-                return;
-            }
-            
-            await pdfMeta.setPdfMetaInfo(pdfPathInfo.fullPath, bookJsMetaInfo,ignoreMeta);
-            helper.info("process pdf meta complete:" + pdfPathInfo.relatePath);
 
-            resolve({file: pdfPathInfo.relatePath});
-        });
-    });
-    
+
+
+const processPdfMeta = async function (pdfPathInfo,bookJsMetaInfo,ignoreMeta){
+    await helper.assertFileReadable(pdfPathInfo.fullPath,"make pdf file failed");
+    helper.info("process pdf meta:" + pdfPathInfo.relatePath);
+    await pdfMeta.setPdfMetaInfo(pdfPathInfo.fullPath, bookJsMetaInfo,ignoreMeta);
+    helper.info("process pdf meta complete:" + pdfPathInfo.relatePath);
+
+    return {file: pdfPathInfo.relatePath};
 };
 
 const renderPdf = function (req, res, next) {
@@ -51,7 +45,7 @@ const renderPdf = function (req, res, next) {
         let bookJsMetaInfo = await normalizeMetaInfo(req,page);
         await browserHelper.renderPdf(page, pdfPathInfo.fullPath,req.body.timeout);
 
-        let data = await processPdfMeta(req,notify,pdfPathInfo,bookJsMetaInfo,ignoreMeta);
+        let data = await processPdfMeta(pdfPathInfo,bookJsMetaInfo,ignoreMeta);
         notify.send(helper.successMsg(data));
     }).catch(function (e) {
         
@@ -345,7 +339,7 @@ const renderWkHtmlToPdf = function (req, res, next) {
     normalizeMetaInfo(req).then(async function (bookJsMetaInfo) {
         let pdfPathInfo = helper.makePdfFileInfo();
         await wkHtmlToPdfHelper.wkHtmlToPdf(postParam.pageUrl, pdfPathInfo.fullPath, postParam.pageSize, postParam.orientation, postParam.delay, postParam.timeout,postParam.windowStatus);
-        let data = await processPdfMeta(req,notify,pdfPathInfo,bookJsMetaInfo,ignoreMeta);
+        let data = await processPdfMeta(pdfPathInfo,bookJsMetaInfo,ignoreMeta);
         notify.send(helper.successMsg(data));
     }).catch(function (e) {
         helper.error("renderWkHtmlToPdf:" + e);
