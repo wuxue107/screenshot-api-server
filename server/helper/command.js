@@ -6,26 +6,34 @@ const helper = require('./index');
 let execCommand = async function (commandFile, commandArgs, timeout) {
     let index = await commandPool.acquire();
     let subProcess;
-    return new Promise(function (resolve, reject) {
+    await new Promise(function (resolve, reject) {
         helper.info("[" + index + "]: run command:'" + commandFile + "', with args:" + JSON.stringify(commandArgs));
 
-
+        let errorMsg = '';
         subProcess = execFile(commandFile, commandArgs, {
             maxBuffer: 4 * 1024 * 1024,
             timeout: timeout
         }, function (err, stdout, stderr) {
-            commandPool.release(index);
             helper.log("STDOUT:" + stdout);
             if (stderr) {
                 helper.log("ERROR:" + stderr);
-            }
-
-            if (err) {
-                reject("" + err);
-            } else {
-                resolve();
+                errorMsg += stderr;
             }
         });
+        
+        subProcess.on('exit',function (code, signals) {
+            helper.info("[" + index + "]: end command,code:" + code)
+            commandPool.release(index);
+            if(code === 0){
+                resolve();
+            }else{
+                reject(errorMsg)
+            }
+        });
+        
+        if(!subProcess.pid){
+            reject("can not run command: " + commandFile)
+        }
 
         helper.info("PID:" + subProcess.pid);
     });

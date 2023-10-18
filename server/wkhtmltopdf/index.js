@@ -20,7 +20,11 @@ const commandOptionsToArgs = function(option){
     
     return commandArgs;
 };
-const wkHtmlToPdf = function (url, pdfFile, pageSize, orientation, delay, timeout, checkWindowStatus) {
+const wkHtmlToPdf = async function (url, pdfFile, pageSize, orientation, delay, timeout, checkWindowStatus) {
+    if(!url){
+        throw "wkhtmltopdf url can not empty"
+    }
+    
     helper.info("wkhtmltopdf: start make pdf, url:" + (url.substr(0,4)==='http' ? url : (url.substr(0,50) + '...')));
 
     orientation = (orientation + "").toLowerCase();
@@ -83,13 +87,12 @@ const wkHtmlToPdf = function (url, pdfFile, pageSize, orientation, delay, timeou
     
     let commandArgs = commandOptionsToArgs(commandOptions);
     commandArgs.push(url, pdfFile);
-    let ret = command.execCommand("wkhtmltopdf", commandArgs, timeout);
+    await command.execCommand("wkhtmltopdf", commandArgs, timeout);
     helper.info("wkhtmltopdf: end make pdf");
-    return ret;
 };
 
-const wkHtmlToPdfBook = function (url, pdfFile, pageSize, orientation, delay, timeout) {
-    return wkHtmlToPdf(url, pdfFile, pageSize, orientation, delay, timeout, "PDFComplete");
+const wkHtmlToPdfBook = async function (url, pdfFile, pageSize, orientation, delay, timeout) {
+    await wkHtmlToPdf(url, pdfFile, pageSize, orientation, delay, timeout, "PDFComplete");
 };
 
 

@@ -55,15 +55,17 @@ let helper = {
       
         return require('path').join(__dirname + '/../../public', path);
     },
-    
+    warn : function (msg) {
+        console.warn('[' + moment().format() + '] WARN:' + msg)
+    },
     log : function (msg) {
-        console.log('[' + moment().format() + '] ' + msg)
+        console.log('[' + moment().format() + '] LOG:' + msg)
     },
     info : function (msg) {
-        console.info('[' +  moment().format() + '] ' + msg)
+        console.info('[' +  moment().format() + '] INFO:' + msg)
     },
     error : function (msg) {
-        console.error('[' +  moment().format() + '] ' + msg)
+        console.error('[' +  moment().format() + '] ERROR:' + msg)
     },
     
     stringToDataUrl : function (text,type) {

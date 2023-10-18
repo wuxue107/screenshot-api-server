@@ -1,6 +1,7 @@
 const nodeExiftool = require('node-exiftool');
 const pdfTool = require('../pdftool');
 const Lodash = require('lodash');
+const helper = require('../helper/index');
 
 const setPdfMetaInfo = async function (pdfFile, apiBookJsMetaInfo,ignoreMeta) {
     // 是否包含目录
@@ -16,11 +17,12 @@ const setPdfMetaInfo = async function (pdfFile, apiBookJsMetaInfo,ignoreMeta) {
         delete obj.keywords;
         delete obj.subject;
         if(Lodash.isEmpty(obj)){
-            return setPdfMetaByExifTool(pdfFile,apiBookJsMetaInfo);
+            await setPdfMetaByExifTool(pdfFile,apiBookJsMetaInfo);
+            return;
         }
     }
 
-    return setPdfMetaInfoByJavaPdfTool(pdfFile,apiBookJsMetaInfo);
+    await setPdfMetaInfoByJavaPdfTool(pdfFile,apiBookJsMetaInfo);
 };
 
 const buildOutlineOption = function(bookmarkItemOptions,subItems,level){
@@ -39,7 +41,8 @@ const buildOutlineOption = function(bookmarkItemOptions,subItems,level){
 };
 
 
-const setPdfMetaByExifTool = function (pdfFile, apiBookJsMetaInfo) {
+const setPdfMetaByExifTool = async function (pdfFile, apiBookJsMetaInfo) {
+    helper.info("exif_tool: set pdf meta");
     let exiftool = new nodeExiftool.ExiftoolProcess(require('dist-exiftool'));
     let metaInfo = {
         Creator: 'bookjs-eazy',
@@ -58,20 +61,18 @@ const setPdfMetaByExifTool = function (pdfFile, apiBookJsMetaInfo) {
         metaInfo.Keywords = information.Keywords;
     }
 
-    return exiftool.open()
-        .then(function () {
-            return exiftool.writeMetadata(pdfFile, metaInfo);
-        })
-        .then(() => exiftool.close())
-        .then(() => {
-            setTimeout(function () {
-                require('fs').unlink(pdfFile + "_original", function () {
-                })
-            }, 50);
-        });
+    await exiftool.open();
+    await exiftool.writeMetadata(pdfFile, metaInfo);
+    await exiftool.close();
+    require('fs').unlink(pdfFile + "_original",function(err){
+        if(err){
+            helper.warn("remove file error:" + pdfFile + "_original")
+        }
+    })
 };
 
-const setPdfMetaInfoByJavaPdfTool = function (pdfFile, apiBookJsMetaInfo) {
+const setPdfMetaInfoByJavaPdfTool = async function (pdfFile, apiBookJsMetaInfo) {
+    helper.info("pdf_tool: set pdf meta");
     let option = apiBookJsMetaInfo.information || {};
     option.pdf = [pdfFile];
     option.output = pdfFile;
@@ -83,7 +84,7 @@ const setPdfMetaInfoByJavaPdfTool = function (pdfFile, apiBookJsMetaInfo) {
         option.bookmarkItem = bookmarkItemOptions;
     }
 
-    return pdfTool.process(option);
+    await pdfTool.process(option);
 };
 
 module.exports = {

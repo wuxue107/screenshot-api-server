@@ -9,29 +9,29 @@ const pdfTool = require('../pdftool');
 const Notify = require('../helper/notify')
 // 定时删除PDF文件任务
 require('../cron/pdfclean');
-const processPdfMeta = function (req,res,pdfPathInfo,bookJsMetaInfo){
+const processPdfMeta = async function (req,res,pdfPathInfo,bookJsMetaInfo,ignoreMeta){
     helper.info("process pdf meta:" + pdfPathInfo.relatePath);
-    return fs.access(pdfPathInfo.fullPath, fs.constants.R_OK, function (err) {
-        if (err) {
-            res.send(helper.failMsg("make pdf file failed:" + err));
-            return;
-        }
-
-        let ignoreMeta = ~~ req.body.ignoreMeta;
-
-        pdfMeta.setPdfMetaInfo(pdfPathInfo.fullPath, bookJsMetaInfo,ignoreMeta).then(()=>{
+    return await new Promise( function (resolve, reject) {
+        fs.access(pdfPathInfo.fullPath, fs.constants.R_OK, async function (err) {
+            if (err) {
+                reject("make pdf file failed:" + err);
+                return;
+            }
+            
+            await pdfMeta.setPdfMetaInfo(pdfPathInfo.fullPath, bookJsMetaInfo,ignoreMeta);
             helper.info("process pdf meta complete:" + pdfPathInfo.relatePath);
-            res.send(helper.successMsg({file: pdfPathInfo.relatePath}));
-        }).catch(function (err) {
-            helper.error("send pdf metainfo failed:" + pdfPathInfo.relatePath + "," + err);
-            res.send(helper.failMsg("send pdf metainfo failed:" + pdfPathInfo.relatePath + "," + err));
+
+            resolve({file: pdfPathInfo.relatePath});
         });
     });
+    
 };
 
 const renderPdf = function (req, res, next) {
     let notify = new Notify(req,res);
     req.body.timeout = ~~req.body.timeout || 120000;
+    let ignoreMeta = !! req.body.ignoreMeta;
+
     res.setTimeout(req.body.timeout, function () {
         notify.send(helper.failMsg("timeout"))
     });
@@ -51,7 +51,8 @@ const renderPdf = function (req, res, next) {
         let bookJsMetaInfo = await normalizeMetaInfo(req,page);
         await browserHelper.renderPdf(page, pdfPathInfo.fullPath,req.body.timeout);
 
-        processPdfMeta(req,notify,pdfPathInfo,bookJsMetaInfo);
+        let data = await processPdfMeta(req,notify,pdfPathInfo,bookJsMetaInfo,ignoreMeta);
+        notify.send(helper.successMsg(data));
     }).catch(function (e) {
         
         let errorMsg = e.toString();
@@ -332,7 +333,7 @@ const normalizeMetaInfo = async function (req,page) {
  */
 const renderWkHtmlToPdf = function (req, res, next) {
     let postParam = req.body;
-
+    let ignoreMeta = !!req.body.ignoreMeta;
     if(!req.pageSize){
         req.pageSize = {
             pageWidth : ~~req.pageWidth,
@@ -341,11 +342,11 @@ const renderWkHtmlToPdf = function (req, res, next) {
     }
     
     let notify = new Notify(req,res);
-    normalizeMetaInfo(req).then(function (bookJsMetaInfo) {
+    normalizeMetaInfo(req).then(async function (bookJsMetaInfo) {
         let pdfPathInfo = helper.makePdfFileInfo();
-        wkHtmlToPdfHelper.wkHtmlToPdf(postParam.pageUrl, pdfPathInfo.fullPath, postParam.pageSize, postParam.orientation, postParam.delay, postParam.timeout,postParam.windowStatus).then(function () {
-            processPdfMeta(req,notify,pdfPathInfo,bookJsMetaInfo);
-        })
+        await wkHtmlToPdfHelper.wkHtmlToPdf(postParam.pageUrl, pdfPathInfo.fullPath, postParam.pageSize, postParam.orientation, postParam.delay, postParam.timeout,postParam.windowStatus);
+        let data = await processPdfMeta(req,notify,pdfPathInfo,bookJsMetaInfo,ignoreMeta);
+        notify.send(helper.successMsg(data));
     }).catch(function (e) {
         helper.error("renderWkHtmlToPdf:" + e);
         notify.send(helper.failMsg("fail:" + e.toString()));
@@ -364,7 +365,7 @@ const renderWkHtmlToPdfBook = function (req, res, next) {
     renderWkHtmlToPdf(req,res,next);
 };
 
-const renderPdfProcess = function(req, res, next){
+const renderPdfProcess = async function(req, res, next){
     let options =  req.body.options || {};
     let timeout =  req.body.timeout;
 
@@ -394,7 +395,7 @@ const renderPdfProcess = function(req, res, next){
     options.output = pdfPathInfo.fullPath;
 
     let notify = new Notify(req,res);
-    pdfTool.process(options,timeout).then(function(){
+    await pdfTool.process(options,timeout).then(function(){
         notify.send(helper.successMsg({file: pdfPathInfo.relatePath}));
     }).catch(function (e) {
         notify.send(helper.failMsg("fail:" + e.toString()));
