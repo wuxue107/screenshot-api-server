@@ -37,6 +37,7 @@ Notify.prototype.send = function (data) {
             }
         });
     }else{
+        helper.info("send response:" + JSON.stringify(data));
         this.res.send(data);
     }
 };
