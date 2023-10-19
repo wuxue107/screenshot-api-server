@@ -94,7 +94,7 @@ const waitPageComplete = async function(page,timeout,checkPageCompleteJs){
             helper.error("waitPageComplete error:" + e.toString())
         });
         
-        return loadComplete !== false;
+        return loadComplete;
     };
     
     await helper.intervalUntil(checkCompleteFunc,100,timeout,false).then(function () {
