@@ -115,7 +115,50 @@ let helper = {
                 resolve();
             });
         });
-    }
+    },
+    
+    
+    wait : async function(millisecond){
+        return await new Promise(function(resolve){
+            setTimeout(resolve,millisecond);
+        });
+    },
+
+    /**
+     * 间隔时间检查，直到检查函数返回非false/undefined值 或超时，终止检查
+     * 
+     * @param asyncCheckFun
+     * @param delay
+     * @param timeout
+     * @param errorStop
+     * @returns {Promise<any>}
+     */
+    intervalUntil : async function(asyncCheckFun,delay,timeout,errorStop){
+        delay = ~~delay;
+        if(delay < 10) delay  = 10;
+        errorStop = !!errorStop;
+        timeout = ~~ timeout;
+        if(timeout <= 0) timeout = 30000;
+        
+        let endTime = (new Date()).getTime() + timeout;
+        while(true){
+            await helper.wait(delay);
+            let v = await asyncCheckFun().catch(function (e) {
+                //helper.warn("helper.intervalUntil asyncCheckFun error:" + e);
+                if(errorStop){
+                    throw e;
+                }
+            });
+            
+            if(v !== false && v !== undefined){
+                return v;
+            }
+
+            if( (new Date()).getTime() > endTime){
+                throw "intervalUntil timeout:" + timeout + "ms"
+            }
+        }
+    },
 };
 
 helper.cache = new NodeCache({ stdTTL: 100 });

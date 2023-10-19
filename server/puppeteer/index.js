@@ -85,10 +85,23 @@ const waitPageComplete = async function(page,timeout,checkPageCompleteJs){
     }
     checkPageCompleteJs = ((checkPageCompleteJs || '') + '') || 'window.document.readyState === "complete"';
 
-    let loadComplete = false;
-    let tickDelay = 100;
-    let time = 0;
-    return new Promise(function(resolve, reject){
+    //let loadComplete = false;
+    //let tickDelay = 100;
+    // let time = 0;
+    
+    let checkCompleteFunc = async function() {
+        let loadComplete = await page.evaluate((checkPageCompleteJs)).catch(function(e){
+            helper.error("waitPageComplete error:" + e.toString())
+        });
+        
+        return loadComplete !== false;
+    };
+    
+    await helper.intervalUntil(checkCompleteFunc,100,timeout,false).then(function () {
+        helper.info("waitPageComplete complete");
+    });
+    
+/*    return new Promise(function(resolve, reject){
         let t = setInterval( function(){
             (async function(){
                 if(loadComplete){
@@ -113,7 +126,7 @@ const waitPageComplete = async function(page,timeout,checkPageCompleteJs){
                 }
             })();
         },tickDelay);
-    });
+    });*/
 };
 
 /**
