@@ -26,29 +26,19 @@ const renderPdf = function (req, res, next) {
     req.body.timeout = ~~req.body.timeout || 120000;
     let ignoreMeta = !! req.body.ignoreMeta;
 
-    res.setTimeout(req.body.timeout, function () {
-        notify.send(helper.failMsg("timeout"))
-    });
+    // res.setTimeout(req.body.timeout, function () {
+    //     notify.send(helper.failMsg("timeout"))
+    // });
 
     let postParam = req.body;
 
-    let pdfPathInfo = helper.makePdfFileInfo();
-    browserHelper.loadPage({
-        pageUrl: postParam.pageUrl,
-        html: postParam.html,
-        timeout: ~~postParam.timeout,
-        delay: ~~postParam.delay,
-        checkPageCompleteJs: postParam.checkPageCompleteJs,
-    },  async function (page) {
+    browserHelper.makePdf(postParam).then(async function (info) {
+        let metaInfo = info.metaInfo;
+        let pathInfo = info.pathInfo;
 
-
-        let bookJsMetaInfo = await normalizeMetaInfo(req,page);
-        await browserHelper.renderPdf(page, pdfPathInfo.fullPath,req.body.timeout);
-
-        let data = await processPdfMeta(pdfPathInfo,bookJsMetaInfo,ignoreMeta);
+        let data = await processPdfMeta(pathInfo,metaInfo,ignoreMeta);
         notify.send(helper.successMsg(data));
-    }).catch(function (e) {
-        
+    }).catch(e => {
         let errorMsg = e.toString();
         if (/ERR_CONNECTION_REFUSED/.test(errorMsg)) {
             errorMsg = "PDF生成服务器无法访问到页面的URL"
@@ -328,8 +318,8 @@ const normalizeMetaInfo = async function (req,page) {
 const renderWkHtmlToPdf = function (req, res, next) {
     let postParam = req.body;
     let ignoreMeta = !!req.body.ignoreMeta;
-    if(!req.pageSize){
-        req.pageSize = {
+    if(!postParam.pageSize){
+        postParam.pageSize = {
             pageWidth : ~~req.pageWidth,
             pageHeight : ~~req.pageHeight,
         }

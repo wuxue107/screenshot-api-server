@@ -45,6 +45,8 @@ Notify.prototype.send = function (data) {
             this.isSend = true
             this.res.send(data);
         }
+    }else{
+        helper.log("backend response:" + JSON.stringify(data));
     }
 };
 

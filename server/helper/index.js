@@ -144,7 +144,7 @@ let helper = {
         while(true){
             await helper.wait(delay);
             let v = await asyncCheckFun().catch(function (e) {
-                //helper.warn("helper.intervalUntil asyncCheckFun error:" + e);
+                helper.warn("helper.intervalUntil asyncCheckFun error:" + e);
                 if(errorStop){
                     throw e;
                 }
@@ -159,6 +159,24 @@ let helper = {
             }
         }
     },
+
+    /**
+     * 运行异步函数，并设置超时时间
+     * 
+     * @param timeout  超时时间，毫秒
+     * @param asyncFunc 要执行的，异步方法
+     * @param throwMsg 超时时的默认返回值
+     * @returns
+     */
+    runWithTimeout: async function(timeout,throwMsg,asyncFunc){
+        let timeoutResult =  new Promise(function (resolve,reject) {
+            setTimeout(function () {
+                reject(throwMsg);
+            },timeout)
+        });
+        
+        return Promise.race([timeoutResult,asyncFunc()]);
+    }
 };
 
 helper.cache = new NodeCache({ stdTTL: 100 });
