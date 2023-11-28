@@ -6,11 +6,54 @@ const pdfMeta = require('../pdfmeta');
 const fs =require('fs');
 const urlencode = require('urlencode');
 const pdfTool = require('../pdftool');
-const Notify = require('../helper/notify')
+const Notify = require('../helper/notify');
+const joi = require('joi');
+
 // 定时删除PDF文件任务
 require('../cron/pdfclean');
 
 
+/** TODO 参数验证 **/
+// let optionSchemaData = joi.object({
+//     'pageUrl': joi.string().optional().uri({scheme: ['http','https','data'],allowRelative:false,allowQuerySquareBrackets:true}).description("目标网页的URI").error(new Error('invalid param pageUrl')),
+//     'html': joi.string().optional().description("页面内容HTML,与pageUrl穿其一").error(new Error('invalid param html')),
+//    
+//     'timeout': joi.number().integer().min(2000).max(60000).default(30000).optional().description("超时时间").error(new Error('invalid param timeout')),
+//     'ignoreMeta': joi.boolean().default(false).optional().description("是否忽略，PDF Meta信息").error(new Error('invalid param ignoreMeta')),
+//     'delay': joi.number().integer().required().default(0).description("在页面完成后，延迟毫秒数").error(new Error('invalid param delay')),
+//     'width': joi.number().integer().required().min(0).default(0).description("在页面完成后，延迟毫秒数").error(new Error('invalid param width')),
+//     'height': joi.number().integer().required().min(0).default(0).description("在页面完成后，延迟毫秒数").error(new Error('invalid param height')),
+//     'checkPageCompleteJs': joi.string().required().default('"true"').description(" 检查页面是否渲染完成的js表达式").error(new Error('invalid param checkPageCompleteJs')),
+//    
+//     'metaInfo':null,
+//    
+//    
+//     "element" : joi.string().required().description("要截取的节点选择器,可选，默认body"),
+//     "elements" : joi.array().single().items(joi.string().required()).min(1).max(100).description("要截取的节点选择器列表"),
+//     "bookConfig" : joi.object({}).options({allowUnknown:true}).description("bookjs-eazy配置"),
+//     "bookStyle" : joi.string().default('').description("模版使用到的的css样式"),
+//     "bookTpl" : joi.string().default('').description("bookjs-eazy模板内容"),
+//    
+//    
+//     "orientation" : joi.string().default('portrait').description("纸张方向：portrait/landscape"),
+//     "pageSize" : joi.string().default('').description("纸张方向：\"portrait\"，\"landscape\""),
+//
+//     'pageWidth': joi.number().integer().required().min(0).default(0).description("纸张宽度（毫米）"),
+//     'pageHeight': joi.number().integer().required().min(0).default(0).description("纸张高度（毫米）"),
+//
+//
+//
+// }).or('pageUrl','html');
+//
+//
+// let allowOptionNames = Lodash.keys(optionSchemaData);
+// let optionSchema = joi.compile(optionSchemaData);
+// let res = optionSchema.validate(Lodash.pick(option,allowOptionNames),{ abortEarly: false,convert: true });
+//
+// if(res.error){
+//     throw res.error;
+// }
+     
 
 const processPdfMeta = async function (pdfPathInfo,bookJsMetaInfo,ignoreMeta){
     await helper.assertFileReadable(pdfPathInfo.fullPath,"make pdf file failed");
@@ -104,7 +147,7 @@ const renderImages = function (req, res, next) {
         html: postParam.html,
         timeout: ~~postParam.timeout,
         delay: ~~postParam.delay,
-        width: ~~postParam.width,
+        width: ~~postParam.width,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
         height: ~~postParam.height,
         checkPageCompleteJs: postParam.checkPageCompleteJs,
     }, async function (page) {
@@ -320,8 +363,8 @@ const renderWkHtmlToPdf = function (req, res, next) {
     let ignoreMeta = !!req.body.ignoreMeta;
     if(!postParam.pageSize){
         postParam.pageSize = {
-            pageWidth : ~~req.pageWidth,
-            pageHeight : ~~req.pageHeight,
+            pageWidth : ~~postParam.pageWidth,
+            pageHeight : ~~postParam.pageHeight,
         }
     }
     
