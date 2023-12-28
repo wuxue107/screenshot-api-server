@@ -20,10 +20,39 @@ app.use('/static',express.static(path.join(__dirname,'static')));
 
 var packageConfig = require('./package.json');
 app.all('*', (req, res, next) => {
+    Object.defineProperty(req, 'origin', {
+        get: function () {
+            var origin =  req.headers.origin;
+            if (origin) {
+                return origin
+            }
+            
+            if(req.headers.referer){
+                let matches = req.headers.referer.match("^\\w+:\\/\\/[^\\/\\?\\#]+");
+                if(matches){
+                    return matches[0];
+                }
+            }
+            
+            if(req.headers.host){
+                return req.protocol + '://' + req.headers.host;
+            }else{
+                let matches = req.url.match("^\\w+:\\/\\/[^\\/\\?\\#]+");
+                if(matches){
+                    return matches[0];
+                }
+                
+                return undefined;
+            }
+        }
+    });
+    
     res.setHeader('X-Powered-By', 'screen-api-server');
     res.setHeader("Server-Version",packageConfig.version);
-    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Origin", req.origin);
     res.setHeader("Access-Control-Allow-Headers", "*");
+    res.setHeader("Access-Control-Max-Age", "86400");
+    //res.setHeader("Access-Control-Allow-Credentials", "false");
     res.setHeader("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
     if (req.method.toLowerCase() === 'options') {
         res.sendStatus(200);  // 让options尝试请求快速结束
