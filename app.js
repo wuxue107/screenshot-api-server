@@ -53,7 +53,7 @@ app.all('*', (req, res, next) => {
     res.setHeader("Access-Control-Allow-Headers", "*");
     res.setHeader("Access-Control-Max-Age", "86400");
     //res.setHeader("Access-Control-Allow-Credentials", "false");
-    res.setHeader("A ccess-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
+    res.setHeader("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
     if (req.method.toLowerCase() === 'options') {
         res.sendStatus(200);  // 让options尝试请求快速结束
     } else {
