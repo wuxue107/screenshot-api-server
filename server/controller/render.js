@@ -8,7 +8,7 @@ const urlencode = require('urlencode');
 const pdfTool = require('../pdftool');
 const Notify = require('../helper/notify');
 const joi = require('joi');
-const request = require('request');
+const axios = require("axios");
 
 // 定时删除PDF文件任务
 require('../cron/pdfclean');
@@ -282,8 +282,6 @@ const renderBookPage = function (req, res, next) {
     });
 };
 
-
-
 const normalizeMetaInfo = async function (req,page) {
     let bookJsMetaInfo = {
         information: {}
@@ -448,10 +446,18 @@ const proxyAssert = async function(req, res, next){
             res.status(401).send("BLOCK_IP_URL")
         }
     }
-    
-    request.get(url).then(function (response) {
-        res.status(200).send(response.body);
-    }).throw(function (err) {
+
+    axios.get(url).then(function (response) {
+        let contentType = response.headers["content-type"];
+        if (contentType){
+            res.header("content-type",contentType)
+            if (contentType.includes('image')){
+                res.header('Cache-Control', 'max-age=' + 3600)
+            }
+        }
+        
+        res.status(200).send(response.data);
+    }).catch(function (err) {
         res.sendStatus(500).send('' + err);
     })
 }
