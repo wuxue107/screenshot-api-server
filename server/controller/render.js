@@ -9,6 +9,7 @@ const pdfTool = require('../pdftool');
 const Notify = require('../helper/notify');
 const joi = require('joi');
 const axios = require("axios");
+const Storage = require("../storage/index");
 
 // 定时删除PDF文件任务
 require('../cron/pdfclean');
@@ -81,6 +82,9 @@ const renderPdf = function (req, res, next) {
         let pathInfo = info.pathInfo;
 
         let data = await processPdfMeta(pathInfo,metaInfo,ignoreMeta);
+
+        await Storage.uploadFile(pathInfo.relatePath,pathInfo.fullPath)
+
         notify.send(helper.successMsg(data));
     }).catch(e => {
         let errorMsg = e.toString();
@@ -372,6 +376,9 @@ const renderWkHtmlToPdf = function (req, res, next) {
         let pdfPathInfo = helper.makePdfFileInfo();
         await wkHtmlToPdfHelper.wkHtmlToPdf(postParam.pageUrl, pdfPathInfo.fullPath, postParam.pageSize, postParam.orientation, postParam.delay, postParam.timeout,postParam.windowStatus);
         let data = await processPdfMeta(pdfPathInfo,bookJsMetaInfo,ignoreMeta);
+
+        await Storage.uploadFile(pdfPathInfo.relatePath,pdfPathInfo.fullPath)
+        
         notify.send(helper.successMsg(data));
     }).catch(function (e) {
         helper.error("renderWkHtmlToPdf:" + e);
