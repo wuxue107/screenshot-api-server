@@ -438,23 +438,25 @@ const renderPdfProcess = async function(req, res, next){
 const proxyAssert = async function(req, res, next){
     let url = req.query.url;
     if(!url){
-        res.sendStatus(400).send("EMPTY URL");
+        res.status(400).send("EMPTY URL");
         return;
     }
-    if(URL.canParse(url)){
-        res.sendStatus(404).send("INVALID URL");
+    let uri = null;
+    try{
+         uri =  new URL(url);
+    }catch (e) {
+        res.status(404).send("INVALID URL");
         return;
     }
     
     let blockIPURL =~~ process.env.BLOCK_IP_URL;
     if(blockIPURL){
-        let uri =  new URL(url);
         if(/^\d+\.\d+\.\d+\.\d+$/.test(uri.hostname)){
             res.status(401).send("BLOCK_IP_URL")
         }
     }
 
-    axios.get(url).then(function (response) {
+    axios.get(url,{responseType: 'arraybuffer'}).then(function (response) {
         let contentType = response.headers["content-type"];
         if (contentType){
             res.header("content-type",contentType)
