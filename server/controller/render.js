@@ -467,7 +467,7 @@ const proxyAssert = async function(req, res, next){
         
         res.status(200).send(response.data);
     }).catch(function (err) {
-        res.sendStatus(500).send('' + err);
+        res.status(500).send('' + err);
     })
 }
 
