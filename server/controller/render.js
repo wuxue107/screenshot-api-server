@@ -8,6 +8,7 @@ const urlencode = require('urlencode');
 const pdfTool = require('../pdftool');
 const Notify = require('../helper/notify');
 const joi = require('joi');
+const request = require('request');
 
 // 定时删除PDF文件任务
 require('../cron/pdfclean');
@@ -429,7 +430,34 @@ const renderPdfProcess = async function(req, res, next){
     });
 };
 
+const proxyAssert = async function(req, res, next){
+    let url = req.query.url;
+    if(!url){
+        res.sendStatus(400).send("EMPTY URL");
+        return;
+    }
+    if(URL.canParse(url)){
+        res.sendStatus(404).send("INVALID URL");
+        return;
+    }
+    
+    let blockIPURL =~~ process.env.BLOCK_IP_URL;
+    if(blockIPURL){
+        let uri =  new URL(url);
+        if(/^\d+\.\d+\.\d+\.\d+$/.test(uri.hostname)){
+            res.status(401).send("BLOCK_IP_URL")
+        }
+    }
+    
+    request.get(url).then(function (response) {
+        res.status(200).send(response.body);
+    }).throw(function (err) {
+        res.sendStatus(500).send('' + err);
+    })
+}
+
 module.exports = {
+    proxyAssert,
     renderPdf,
     renderImage,
     renderImages,
