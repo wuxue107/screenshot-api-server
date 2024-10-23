@@ -437,6 +437,12 @@ const renderPdfProcess = async function(req, res, next){
 
 const proxyAssert = async function(req, res, next){
     let url = req.query.url;
+    let timeout = ~~(req.query.timeout);
+    if(timeout < 60){
+        timeout = 60;
+    }else if(timeout > 60000){
+        timeout = 60000;
+    }
     if(!url){
         res.status(400).send("EMPTY URL");
         return;
@@ -456,7 +462,7 @@ const proxyAssert = async function(req, res, next){
         }
     }
 
-    axios.get(url,{responseType: 'arraybuffer'}).then(function (response) {
+    axios.get(url,{responseType: 'arraybuffer',timeout: timeout}).then(function (response) {
         let contentType = response.headers["content-type"];
         if (contentType){
             res.header("content-type",contentType)
