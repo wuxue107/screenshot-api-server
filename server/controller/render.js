@@ -438,8 +438,10 @@ const renderPdfProcess = async function(req, res, next){
 const proxyAssert = async function(req, res, next){
     let url = req.query.url;
     let timeout = ~~(req.query.timeout);
-    if(timeout < 1000){
-        timeout = 1000;
+    if(timeout <= 0){
+        timeout = 15000;
+    }else if(timeout < 3000){
+        timeout = 3000;
     }else if(timeout > 60000){
         timeout = 60000;
     }
